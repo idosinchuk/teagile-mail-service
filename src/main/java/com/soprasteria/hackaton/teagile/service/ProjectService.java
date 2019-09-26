@@ -2,6 +2,9 @@ package com.soprasteria.hackaton.teagile.service;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
+import com.soprasteria.hackaton.teagile.dto.ProjectRequestDTO;
 import com.soprasteria.hackaton.teagile.dto.ProjectResponseDTO;
 
 /**
@@ -14,7 +17,7 @@ import com.soprasteria.hackaton.teagile.dto.ProjectResponseDTO;
 public interface ProjectService {
 
 	/**
-	 * Retrieve list of all projects according to the search criteria.
+	 * Retrieve list of all projects.
 	 * 
 	 * @param pageable object for pagination
 	 * @return Page of {@link ProjectResponseDTO}
@@ -22,29 +25,29 @@ public interface ProjectService {
 	List<ProjectResponseDTO> getAllProjects();
 
 	/**
-	 * Find projects by the projectCode.
+	 * Find projects by id.
 	 * 
-	 * @param projectCode project code
+	 * @param id project id
 	 * @return {@link ProjectResponseDTO}
 	 */
-	ProjectResponseDTO getProjects(String projectCode);
+	ProjectResponseDTO getProject(int id);
 
 	/**
-	 * Add a project..
+	 * Add a project.
 	 * 
 	 * @param projectRequestDTO object to save
 	 * 
-	 * @return ProjectResponseDTO
+	 * @return ResponseEntity
 	 */
-	ProjectResponseDTO addProject(ProjectRequestDTO projectRequestDTO);
+	ResponseEntity<?> addProject(ProjectRequestDTO projectRequestDTO);
 
 	/**
 	 * Update the project.
 	 * 
-	 * @param projectCode       project code
+	 * @param id                project id
 	 * @param projectRequestDTO object to save
 	 * 
-	 * @return ProjectResponseDTO
+	 * @return ResponseEntity
 	 */
-	ProjectResponseDTO updateProject(String projectCode, ProjectRequestDTO projectRequestDTO);
+	ResponseEntity<?> updateProject(int id, ProjectRequestDTO projectRequestDTO);
 }

@@ -2,6 +2,8 @@ package com.soprasteria.hackaton.teagile.service;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
 import com.soprasteria.hackaton.teagile.dto.UserRequestDTO;
 import com.soprasteria.hackaton.teagile.dto.UserResponseDTO;
 
@@ -19,32 +21,33 @@ public interface UserService {
 	 * 
 	 * @return List of {@link UserResponseDTO}
 	 */
-	List<UserResponseDTO> getUsers();
+	List<UserResponseDTO> getAllUsers();
 
 	/**
-	 * Find user by the loginName.
+	 * Find user by login passing the loginName and loginPassword.
 	 * 
-	 * @param userCode user code
+	 * @param loginName     user login name
+	 * @param loginPassword user login password
 	 * @return {@link UserResponseDTO}
 	 */
-	UserResponseDTO getUser(String loginName);
+	UserResponseDTO getUserByLogin(String loginName, String loginPassword);
 
 	/**
-	 * Add a user..
+	 * Add a user.
 	 * 
 	 * @param userRequestDTO object to save
 	 * 
-	 * @return UserResponseDTO
+	 * @return ResponseEntity
 	 */
-	UserResponseDTO addUser(UserRequestDTO userRequestDTO);
+	ResponseEntity<?> addUser(UserRequestDTO userRequestDTO);
 
 	/**
 	 * Update the user.
 	 * 
-	 * @param userCode       user code
+	 * @param id             user id
 	 * @param userRequestDTO object to save
 	 * 
-	 * @return UserResponseDTO
+	 * @return ResponseEntity
 	 */
-	UserResponseDTO updateUser(String userCode, UserRequestDTO userRequestDTO);
+	ResponseEntity<?> updateUser(int id, UserRequestDTO userRequestDTO);
 }

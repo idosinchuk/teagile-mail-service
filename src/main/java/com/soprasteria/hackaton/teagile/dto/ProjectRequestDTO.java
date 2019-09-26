@@ -1,8 +1,6 @@
 package com.soprasteria.hackaton.teagile.dto;
 
-import java.util.List;
-
-import org.springframework.data.annotation.Id;
+import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -29,11 +27,5 @@ public class ProjectRequestDTO {
 
 	@ApiModelProperty(value = "Project status", example = "Created")
 	private String status;
-
-	@ApiModelProperty(value = "Tasks", example = "")
-	private List<TaskRequestDTO> tasks;
-
-	@ApiModelProperty(value = "Meetings", example = "")
-	private List<MeetingRequestDTO> meetings;
 
 }

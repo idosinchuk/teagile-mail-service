@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.idosinchuk.architecturechallenge.insurancecompany.util.CustomErrorType;
 import com.soprasteria.hackaton.teagile.dto.UserRequestDTO;
 import com.soprasteria.hackaton.teagile.dto.UserResponseDTO;
 import com.soprasteria.hackaton.teagile.service.UserService;
@@ -64,40 +64,36 @@ public class UserController {
 
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
-			return CustomErrorType.returnResponsEntityError(e.getMessage());
+			// TODO: Devolver error
 		}
 
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
 	/**
-	 * Retrieve user by the userCode.
+	 * Retrieve user by loginName and loginPassword.
 	 * 
-	 * @param userCode user code
+	 * @param loginName     user login name
+	 * @param loginPassword user login password
 	 * @return ResponseEntity with status and userResponseDTO
 	 */
-	@GetMapping(path = "/users/{userCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve user by the userCode.")
-	public ResponseEntity<UserResponseDTO> getUsers(@PathVariable("userCode") String userCode) {
+	public ResponseEntity<?> getUserByLogin(@RequestParam("loginName") String loginName,
+			@RequestParam("loginPassword") String loginPassword) {
 
-		logger.info("Fetching user with userCode {}", userCode);
+		logger.info("Fetching user with loginName {} ", loginName);
 
 		UserResponseDTO userResponseDTO = null;
 
 		try {
-			// Search product in BD by userCode
-			userResponseDTO = userService.getUsers(userCode);
-
+			userResponseDTO = userService.getUserByLogin(loginName, loginPassword);
 			return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
 
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
-//			return new ResponseEntity<>(e.getMessage(),
-//					HttpStatus.INTERNAL_SERVER_ERROR);
-
-			return CustomErrorType.returnResponsEntityError(e.getMessage());
-
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -110,32 +106,29 @@ public class UserController {
 	@PostMapping(path = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Add a user.")
-	public ResponseEntity<?> addUsers(@Valid @RequestBody UserRequestDTO userRequestDTO) {
+	public ResponseEntity<?> addUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
 
 		logger.info("Process add user");
 
-		UserResponseDTO userResponseDTO = userService.addUser(userRequestDTO);
-		return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
+		return userService.addUser(userRequestDTO);
 
 	}
 
 	/**
 	 * Update a user
 	 * 
-	 * @param userCode       user code
+	 * @param id             user id
 	 * @param userRequestDTO object to update
 	 * @return ResponseEntity with resource and status
 	 */
-	@PatchMapping(path = "/users/{userCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping(path = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Update the user.")
-	public ResponseEntity<?> updateUsers(@PathVariable("userCode") String userCode,
-			@RequestBody UserRequestDTO userRequestDTO) {
+	public ResponseEntity<?> updateUser(@PathVariable("id") int id, @RequestBody UserRequestDTO userRequestDTO) {
 
 		logger.info("Process patch user");
 
-		UserResponseDTO userResponseDTO = userService.updateUser(userCode, userRequestDTO);
+		return userService.updateUser(id, userRequestDTO);
 
-		return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
 	}
 }
