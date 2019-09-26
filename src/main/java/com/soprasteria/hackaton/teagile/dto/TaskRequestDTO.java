@@ -40,9 +40,6 @@ public class TaskRequestDTO {
 	@ApiModelProperty(value = "Task label color", example = "blue")
 	private String labelColor;
 
-	@ApiModelProperty(value = "Task type", example = "Meeting or task")
-	private String type;
-
 	@ApiModelProperty(value = "Task status", example = "Created")
 	private String status;
 

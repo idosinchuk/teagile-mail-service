@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.net.HttpHeaders;
+import com.soprasteria.hackaton.teagile.dto.ProjectRequestDTO;
+import com.soprasteria.hackaton.teagile.dto.ProjectResponseDTO;
 import com.soprasteria.hackaton.teagile.service.ProjectService;
 
 import io.swagger.annotations.Api;
