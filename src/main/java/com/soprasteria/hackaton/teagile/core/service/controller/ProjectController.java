@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.soprasteria.hackaton.teagile.core.service.dto.ProjectRequestDTO;
 import com.soprasteria.hackaton.teagile.core.service.dto.ProjectResponseDTO;
-import com.soprasteria.hackaton.teagile.core.service.dto.UserResponseDTO;
 import com.soprasteria.hackaton.teagile.core.service.service.ProjectService;
 
 import io.swagger.annotations.Api;
