@@ -28,8 +28,8 @@ public class UserRequestDTO {
 	@ApiModelProperty(value = "User surname", example = "Stevenson")
 	private String surname;
 
-	@ApiModelProperty(value = "Login name", example = "jhon")
-	private String loginName;
+	@ApiModelProperty(value = "Email", example = "jhon")
+	private String loginEmail;
 
 	@ApiModelProperty(value = "Login password", example = "admin123")
 	private String loginPassword;

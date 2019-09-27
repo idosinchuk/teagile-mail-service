@@ -1,5 +1,7 @@
 package com.soprasteria.hackaton.teagile.dto;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -29,6 +31,6 @@ public class UserResponseDTO {
 	private String surname;
 
 	@ApiModelProperty(value = "Projects", example = "")
-	private ProjectResponseDTO projects;
+	private List<ProjectResponseDTO> projects;
 
 }

@@ -43,8 +43,8 @@ public class UserEntity {
 	@Column(name = "surname", nullable = false)
 	private String surname;
 
-	@Column(name = "login_name", nullable = false)
-	private String loginName;
+	@Column(name = "login_email", nullable = false)
+	private String loginEmail;
 
 	@Column(name = "login_password", nullable = false)
 	private String loginPassword;
