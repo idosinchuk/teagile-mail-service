@@ -95,7 +95,7 @@ public class UserController {
 	 * @param password user password
 	 * @return ResponseEntity with status and userResponseDTO
 	 */
-	@GetMapping(path = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve user by login credentials.")
 	public ResponseEntity<UserResponseDTO> getUserByLogin(@RequestParam("email") String email,
