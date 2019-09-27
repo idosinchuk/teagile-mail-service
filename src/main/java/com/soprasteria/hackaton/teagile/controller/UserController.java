@@ -7,7 +7,6 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,18 +55,7 @@ public class UserController {
 	public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
 
 		logger.info("Fetching all users");
-
-		List<UserResponseDTO> user = null;
-
-		try {
-			user = userService.getAllUsers();
-
-		} catch (Exception e) {
-			logger.error("An error occurred! {}", e.getMessage());
-			// TODO: Devolver error
-		}
-
-		return new ResponseEntity<>(user, HttpStatus.OK);
+		return userService.getAllUsers();
 	}
 
 	/**
@@ -79,47 +67,25 @@ public class UserController {
 	@GetMapping(path = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve user by Id.")
-	public ResponseEntity<?> getUser(@PathVariable("id") int id) {
+	public ResponseEntity<UserResponseDTO> getUser(@PathVariable("id") int id) {
 
 		logger.info("Fetching user with id {} ", id);
-
-		UserResponseDTO userResponseDTO = null;
-
-		try {
-			userResponseDTO = userService.getUser(id);
-			return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
-
-		} catch (Exception e) {
-			logger.error("An error occurred! {}", e.getMessage());
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return userService.getUser(id);
 	}
 
 	/**
-	 * Retrieve user by loginName and loginPassword.
+	 * Retrieve user by user login name.
 	 * 
-	 * @param loginName     user login name
-	 * @param loginPassword user login password
+	 * @param loginName user login name
 	 * @return ResponseEntity with status and userResponseDTO
 	 */
 	@GetMapping(path = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@ApiOperation(value = "Retrieve user by the userCode.")
-	public ResponseEntity<?> getxogin(@RequestParam("loginName") String loginName,
-			@RequestParam("loginPassword") String loginPassword) {
+	@ApiOperation(value = "Retrieve user by login name.")
+	public ResponseEntity<UserResponseDTO> getUserByLoginName(@PathVariable("loginName") String loginName) {
 
-		logger.info("Fetching user with loginName {} ", loginName);
-
-		UserResponseDTO userResponseDTO = null;
-
-		try {
-			userResponseDTO = userService.getUserByLogin(loginName, loginPassword);
-			return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
-
-		} catch (Exception e) {
-			logger.error("An error occurred! {}", e.getMessage());
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		logger.info("Fetching user by loginName with loginName {} ", loginName);
+		return userService.getUserByLoginName(loginName);
 	}
 
 	/**
@@ -134,9 +100,7 @@ public class UserController {
 	public ResponseEntity<?> addUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
 
 		logger.info("Process add user");
-
 		return userService.addUser(userRequestDTO);
-
 	}
 
 	/**
@@ -152,8 +116,6 @@ public class UserController {
 	public ResponseEntity<?> updateUser(@PathVariable("id") int id, @RequestBody UserRequestDTO userRequestDTO) {
 
 		logger.info("Process patch user");
-
 		return userService.updateUser(id, userRequestDTO);
-
 	}
 }

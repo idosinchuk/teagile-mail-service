@@ -45,23 +45,49 @@ public class ProjectServiceImpl implements ProjectService {
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<ProjectResponseDTO> getAllProjects() {
+	public ResponseEntity<List<ProjectResponseDTO>> getAllProjects() {
 
 		List<ProjectEntity> entityResponse = projectRepository.findAll();
 
 		// Convert Entity response to DTO
-		return modelMapper.map(entityResponse, new TypeToken<List<ProjectResponseDTO>>() {
+		List<ProjectResponseDTO> projects = modelMapper.map(entityResponse, new TypeToken<List<ProjectResponseDTO>>() {
 		}.getType());
+
+		return new ResponseEntity<>(projects, HttpStatus.OK);
+
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public ProjectResponseDTO getProject(int id) {
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<ProjectResponseDTO> getProject(int id) {
 
-		ProjectEntity entityResponse = projectRepository.findById(id);
+		ProjectResponseDTO projectResponseDTO = null;
+		Resources<CustomMessage> resource = null;
 
-		return modelMapper.map(entityResponse, ProjectResponseDTO.class);
+		try {
+			List<CustomMessage> customMessageList = null;
+
+			ProjectEntity entityResponse = projectRepository.findById(id);
+
+			if (entityResponse == null) {
+				customMessageList = ArrayListCustomMessage
+						.setMessage("The requested project does not exists. Please try again.", HttpStatus.NO_CONTENT);
+				resource = new Resources<>(customMessageList);
+				resource.add(linkTo(ProjectController.class).withSelfRel());
+
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+
+			projectResponseDTO = modelMapper.map(entityResponse, ProjectResponseDTO.class);
+
+		} catch (Exception e) {
+			logger.error("An error occurred! {}", e.getMessage());
+			return CustomErrorType.returnResponsEntityError(e.getMessage());
+		}
+
+		return new ResponseEntity<>(projectResponseDTO, HttpStatus.OK);
 
 	}
 

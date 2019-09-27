@@ -21,7 +21,7 @@ public interface UserService {
 	 * 
 	 * @return List of {@link UserResponseDTO}
 	 */
-	List<UserResponseDTO> getAllUsers();
+	ResponseEntity<List<UserResponseDTO>> getAllUsers();
 
 	/**
 	 * Find user by id.
@@ -29,16 +29,15 @@ public interface UserService {
 	 * @param id user id
 	 * @return {@link UserResponseDTO}
 	 */
-	UserResponseDTO getUser(int id);
+	ResponseEntity<UserResponseDTO> getUser(int id);
 
 	/**
-	 * Find user by login passing the loginName and loginPassword.
+	 * Find user by user login name.
 	 * 
-	 * @param loginName     user login name
-	 * @param loginPassword user login password
+	 * @param loginName user login name
 	 * @return {@link UserResponseDTO}
 	 */
-	UserResponseDTO getUserByLogin(String loginName, String loginPassword);
+	ResponseEntity<UserResponseDTO> getUserByLoginName(String loginName);
 
 	/**
 	 * Add a user.

@@ -22,7 +22,7 @@ public interface ProjectService {
 	 * @param pageable object for pagination
 	 * @return Page of {@link ProjectResponseDTO}
 	 */
-	List<ProjectResponseDTO> getAllProjects();
+	ResponseEntity<List<ProjectResponseDTO>> getAllProjects();
 
 	/**
 	 * Find project by id.
@@ -30,7 +30,7 @@ public interface ProjectService {
 	 * @param id project id
 	 * @return {@link ProjectResponseDTO}
 	 */
-	ProjectResponseDTO getProject(int id);
+	ResponseEntity<ProjectResponseDTO> getProject(int id);
 
 	/**
 	 * Add a project.

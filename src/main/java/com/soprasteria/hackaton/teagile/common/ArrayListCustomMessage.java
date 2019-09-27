@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 
-import com.idosinchuk.architecturechallenge.insurancecompany.common.CustomMessage;
-
 public class ArrayListCustomMessage {
 
 	public static List<CustomMessage> setMessage(String message, HttpStatus status) {

@@ -7,7 +7,6 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,18 +54,7 @@ public class ProjectController {
 	public ResponseEntity<List<ProjectResponseDTO>> getAllProjects() {
 
 		logger.info("Fetching all projects");
-
-		List<ProjectResponseDTO> project = null;
-
-		try {
-			project = projectService.getAllProjects();
-
-		} catch (Exception e) {
-			logger.error("An error occurred! {}", e.getMessage());
-			// TODO: Devolver error
-		}
-
-		return new ResponseEntity<>(project, HttpStatus.OK);
+		return projectService.getAllProjects();
 	}
 
 	/**
@@ -78,21 +66,10 @@ public class ProjectController {
 	@GetMapping(path = "/projects/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve project by the projectCode.")
-	public ResponseEntity<?> getProject(@PathVariable("projectCode") int id) {
+	public ResponseEntity<ProjectResponseDTO> getProject(@PathVariable("projectCode") int id) {
 
 		logger.info("Fetching project with id {}", id);
-
-		ProjectResponseDTO projectResponseDTO = null;
-
-		try {
-			projectResponseDTO = projectService.getProject(id);
-
-			return new ResponseEntity<>(projectResponseDTO, HttpStatus.OK);
-
-		} catch (Exception e) {
-			logger.error("An error occurred! {}", e.getMessage());
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return projectService.getProject(id);
 	}
 
 	/**

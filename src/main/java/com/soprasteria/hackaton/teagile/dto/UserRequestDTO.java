@@ -34,7 +34,4 @@ public class UserRequestDTO {
 	@ApiModelProperty(value = "Login password", example = "admin123")
 	private String loginPassword;
 
-	@ApiModelProperty(value = "Projects", example = "")
-	private ProjectRequestDTO projects;
-
 }
