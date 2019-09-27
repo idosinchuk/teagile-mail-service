@@ -1,5 +1,7 @@
 package com.soprasteria.hackaton.teagile.dto;
 
+import javax.validation.constraints.NotNull;
+
 import org.springframework.data.annotation.Id;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -25,12 +27,15 @@ public class UserRequestDTO {
 	@ApiModelProperty(value = "Id", example = "1")
 	private int id;
 
+	@NotNull
 	@ApiModelProperty(value = "User name", example = "Jhon")
 	private String name;
 
+	@NotNull
 	@ApiModelProperty(value = "User surname", example = "Stevenson")
 	private String surname;
 
+	@NotNull
 	@ApiModelProperty(value = "Email", example = "jhon")
 	private String email;
 
