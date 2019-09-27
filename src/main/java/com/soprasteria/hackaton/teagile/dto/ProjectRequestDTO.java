@@ -12,6 +12,9 @@ import lombok.Data;
  * Request DTO for project
  * 
  * @author Igor Dosinchuk
+ * @author Luis Rapestre
+ * 
+ * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data

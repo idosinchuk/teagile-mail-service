@@ -12,6 +12,9 @@ import lombok.Data;
  * Request DTO for User
  * 
  * @author Igor Dosinchuk
+ * @author Luis Rapestre
+ * 
+ * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
@@ -29,9 +32,9 @@ public class UserRequestDTO {
 	private String surname;
 
 	@ApiModelProperty(value = "Email", example = "jhon")
-	private String loginEmail;
+	private String email;
 
 	@ApiModelProperty(value = "Login password", example = "admin123")
-	private String loginPassword;
+	private String password;
 
 }

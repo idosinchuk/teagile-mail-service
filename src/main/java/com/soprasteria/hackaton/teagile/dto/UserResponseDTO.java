@@ -14,6 +14,9 @@ import lombok.Data;
  * Response DTO for User
  * 
  * @author Igor Dosinchuk
+ * @author Luis Rapestre
+ * 
+ * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
@@ -29,6 +32,12 @@ public class UserResponseDTO {
 
 	@ApiModelProperty(value = "User surname", example = "Stevenson")
 	private String surname;
+
+	@ApiModelProperty(value = "Email", example = "jhon")
+	private String email;
+
+	@ApiModelProperty(value = "Login password", example = "admin123")
+	private String password;
 
 	@ApiModelProperty(value = "Projects", example = "")
 	private List<ProjectResponseDTO> projects;

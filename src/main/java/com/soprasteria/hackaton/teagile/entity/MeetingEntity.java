@@ -19,13 +19,14 @@ import lombok.NoArgsConstructor;
  * Entity for Meeting
  * 
  * @author Igor Dosinchuk
+ * @author Luis Rapestre
  *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @NoArgsConstructor
 @Data
-@Table(name = "Meeting")
+@Table(name = "meeting")
 public class MeetingEntity {
 
 	@Id
@@ -48,7 +49,7 @@ public class MeetingEntity {
 	@Column(name = "event_repeat_frequency", nullable = false)
 	private int eventRepeatFrequency;
 
-	@Column(name = "labelColor")
+	@Column(name = "label_color")
 	private String labelColor;
 
 	@Column(name = "status")

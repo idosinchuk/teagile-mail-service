@@ -23,13 +23,14 @@ import lombok.NoArgsConstructor;
  * Entity for User
  * 
  * @author Igor Dosinchuk
+ * @author Luis Rapestre
  *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @NoArgsConstructor
 @Data
-@Table(name = "User")
+@Table(name = "user")
 public class UserEntity {
 
 	@Id
@@ -43,13 +44,13 @@ public class UserEntity {
 	@Column(name = "surname", nullable = false)
 	private String surname;
 
-	@Column(name = "login_email", nullable = false)
-	private String loginEmail;
+	@Column(name = "email", nullable = false)
+	private String email;
 
-	@Column(name = "login_password", nullable = false)
-	private String loginPassword;
+	@Column(name = "password", nullable = false)
+	private String password;
 
-	@JoinTable(name = "User_has_Project", joinColumns = @JoinColumn(name = "user_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "project_id", nullable = false))
+	@JoinTable(name = "user_has_project", joinColumns = @JoinColumn(name = "user_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "project_id", nullable = false))
 	@ManyToMany(cascade = CascadeType.MERGE)
 	private List<ProjectEntity> projects;
 

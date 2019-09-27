@@ -19,13 +19,14 @@ import lombok.NoArgsConstructor;
  * Entity for Task
  * 
  * @author Igor Dosinchuk
+ * @author Luis Rapestre
  *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @NoArgsConstructor
 @Data
-@Table(name = "Task")
+@Table(name = "task")
 public class TaskEntity {
 
 	@Id
@@ -45,7 +46,7 @@ public class TaskEntity {
 	@Column(name = "end_date", nullable = false)
 	private String endDate;
 
-	@Column(name = "labelColor")
+	@Column(name = "label_color")
 	private String labelColor;
 
 	@Column(name = "status")

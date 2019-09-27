@@ -12,6 +12,9 @@ import lombok.Data;
  * Request DTO for Meeting
  * 
  * @author Igor Dosinchuk
+ * @author Luis Rapestre
+ * 
+ * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
@@ -27,9 +30,6 @@ public class MeetingRequestDTO {
 
 	@ApiModelProperty(value = "Meeting description", example = "This is a description")
 	private String description;
-
-	@ApiModelProperty(value = "Target user", example = "Jhon")
-	private String targetUser;
 
 	@ApiModelProperty(value = "Start date", example = "27-09-2019 17:30:00")
 	private String startDate;

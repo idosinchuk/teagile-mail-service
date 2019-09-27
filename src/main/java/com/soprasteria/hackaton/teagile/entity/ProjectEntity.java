@@ -20,13 +20,14 @@ import lombok.NoArgsConstructor;
  * Entity for Project
  * 
  * @author Igor Dosinchuk
+ * @author Luis Rapestre
  *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @NoArgsConstructor
 @Data
-@Table(name = "Project")
+@Table(name = "project")
 public class ProjectEntity {
 
 	@Id
