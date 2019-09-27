@@ -41,9 +41,9 @@ public class TeAgileHackatonApplication {
 
 	// Describe your apis
 	private ApiInfo apiInfo() {
-		return new ApiInfoBuilder().title("Swagger InsuranceCompany")
-				.description("This page lists all the rest apis for Swagger InsuranceCompany.").version("1.0-SNAPSHOT")
-				.build();
+		return new ApiInfoBuilder().title("Swagger teagile-core-service")
+				.description("This page lists all the rest apis for Swagger teagile-core-service.")
+				.version("1.0-SNAPSHOT").build();
 	}
 
 	// Only select apis that matches the given Predicates.
