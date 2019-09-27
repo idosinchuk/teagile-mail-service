@@ -2,6 +2,7 @@ package com.soprasteria.hackaton.teagile.service.impl;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
+import java.util.Base64;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -41,14 +42,17 @@ public class LoginServiceImpl implements LoginService {
 	/**
 	 * {@inheritDoc}
 	 */
-	public ResponseEntity<?> getLogin(String loginName, String loginPassword) {
+	public ResponseEntity<?> getLogin(String email, String password) {
 
 		Resources<CustomMessage> resource = null;
 
 		try {
 			List<CustomMessage> customMessageList = null;
 
-			UserEntity entityResponse = userRepository.findByLoginNameAndLoginPassword(loginName, loginPassword);
+			byte[] passwordBytes = Base64.getDecoder().decode(password);
+			String decodedPassword = new String(passwordBytes);
+
+			UserEntity entityResponse = userRepository.findByEmailAndPassword(email, decodedPassword);
 
 			if (entityResponse == null) {
 				customMessageList = ArrayListCustomMessage
