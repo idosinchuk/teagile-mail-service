@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.soprasteria.hackaton.teagile.dto.ProjectRequestDTO;
 import com.soprasteria.hackaton.teagile.dto.ProjectResponseDTO;
+import com.soprasteria.hackaton.teagile.dto.UserResponseDTO;
 import com.soprasteria.hackaton.teagile.service.ProjectService;
 
 import io.swagger.annotations.Api;
@@ -106,5 +108,20 @@ public class ProjectController {
 
 		return projectService.updateProject(id, projectRequestDTO);
 
+	}
+
+	/**
+	 * Retrieve user by Id.
+	 * 
+	 * @param id user Id
+	 * @return ResponseEntity with status and userResponseDTO
+	 */
+	@DeleteMapping(path = "/projects/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	@ApiOperation(value = "Delete project by Id.")
+	public ResponseEntity<ProjectResponseDTO> deleteUser(@PathVariable("id") int id) {
+
+		logger.info("Deleting user with id {} ", id);
+		return projectService.deleteProject(id);
 	}
 }

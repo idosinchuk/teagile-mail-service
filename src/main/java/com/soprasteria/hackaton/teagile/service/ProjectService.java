@@ -50,4 +50,12 @@ public interface ProjectService {
 	 * @return ResponseEntity
 	 */
 	ResponseEntity<?> updateProject(int id, ProjectRequestDTO projectRequestDTO);
+
+	/**
+	 * Delete project by id.
+	 * 
+	 * @param id project id
+	 * @return {@link ProjectResponseDTO}
+	 */
+	ResponseEntity<ProjectResponseDTO> deleteProject(int id);
 }

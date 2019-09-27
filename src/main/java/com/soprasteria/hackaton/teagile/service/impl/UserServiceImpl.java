@@ -257,4 +257,24 @@ public class UserServiceImpl implements UserService {
 		return new ResponseEntity<>(resource, HttpStatus.OK);
 
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<UserResponseDTO> deleteUser(int id) {
+
+		UserResponseDTO userResponseDTO = null;
+
+		try {
+			userRepository.deleteById(id);
+	
+		} catch (Exception e) {
+			logger.error("An error occurred! {}", e.getMessage());
+			return CustomErrorType.returnResponsEntityError(e.getMessage());
+		}
+
+		return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
+
+	}
 }

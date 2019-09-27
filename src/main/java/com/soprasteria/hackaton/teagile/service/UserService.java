@@ -66,4 +66,12 @@ public interface UserService {
 	 * @return ResponseEntity
 	 */
 	ResponseEntity<?> updateUser(int id, UserRequestDTO userRequestDTO);
+
+	/**
+	 * Delete user by id.
+	 * 
+	 * @param id user id
+	 * @return {@link UserResponseDTO}
+	 */
+	ResponseEntity<UserResponseDTO> deleteUser(int id);
 }

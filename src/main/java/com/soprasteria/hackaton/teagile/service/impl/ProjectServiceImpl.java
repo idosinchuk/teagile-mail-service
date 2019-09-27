@@ -21,6 +21,7 @@ import com.soprasteria.hackaton.teagile.common.CustomMessage;
 import com.soprasteria.hackaton.teagile.controller.ProjectController;
 import com.soprasteria.hackaton.teagile.dto.ProjectRequestDTO;
 import com.soprasteria.hackaton.teagile.dto.ProjectResponseDTO;
+import com.soprasteria.hackaton.teagile.dto.UserResponseDTO;
 import com.soprasteria.hackaton.teagile.entity.ProjectEntity;
 import com.soprasteria.hackaton.teagile.repository.ProjectRepository;
 import com.soprasteria.hackaton.teagile.service.ProjectService;
@@ -184,6 +185,26 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 
 		return new ResponseEntity<>(resource, HttpStatus.OK);
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<ProjectResponseDTO> deleteProject(int id) {
+
+		ProjectResponseDTO projectResponseDTO = null;
+
+		try {
+			projectRepository.deleteById(id);
+	
+		} catch (Exception e) {
+			logger.error("An error occurred! {}", e.getMessage());
+			return CustomErrorType.returnResponsEntityError(e.getMessage());
+		}
+
+		return new ResponseEntity<>(projectResponseDTO, HttpStatus.OK);
 
 	}
 }
