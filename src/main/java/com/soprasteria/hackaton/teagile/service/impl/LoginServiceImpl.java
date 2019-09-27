@@ -28,7 +28,7 @@ import com.soprasteria.hackaton.teagile.service.LoginService;
  * @author Igor Dosinchuk
  *
  */
-@Service("UserService")
+@Service("LoginService")
 public class LoginServiceImpl implements LoginService {
 
 	@Autowired

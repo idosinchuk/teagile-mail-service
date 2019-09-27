@@ -40,7 +40,7 @@ public class LoginController {
 	 * @param password user password
 	 * @return ResponseEntity with status and userResponseDTO
 	 */
-	@GetMapping(path = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve user by login credentials.")
 	public ResponseEntity<?> getLogin(@RequestParam("email") String email, @RequestParam("password") String password) {
