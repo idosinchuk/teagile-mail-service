@@ -195,7 +195,7 @@ public class UserServiceImpl implements UserService {
 			userRepository.save(entityRequest);
 
 			// Send email
-			sendEmail(userRequestDTO.getEmail());
+			// sendEmail(userRequestDTO.getEmail());
 
 			customMessageList = ArrayListCustomMessage.setMessage("Created new user", HttpStatus.CREATED);
 
