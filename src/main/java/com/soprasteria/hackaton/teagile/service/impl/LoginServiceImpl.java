@@ -17,7 +17,6 @@ import com.soprasteria.hackaton.teagile.common.ArrayListCustomMessage;
 import com.soprasteria.hackaton.teagile.common.CustomErrorType;
 import com.soprasteria.hackaton.teagile.common.CustomMessage;
 import com.soprasteria.hackaton.teagile.controller.UserController;
-import com.soprasteria.hackaton.teagile.dto.UserResponseDTO;
 import com.soprasteria.hackaton.teagile.entity.UserEntity;
 import com.soprasteria.hackaton.teagile.repository.UserRepository;
 import com.soprasteria.hackaton.teagile.service.LoginService;
@@ -66,40 +65,6 @@ public class LoginServiceImpl implements LoginService {
 		}
 
 		return new ResponseEntity<>(resource, HttpStatus.OK);
-
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	public ResponseEntity<UserResponseDTO> getUserByLogin(String loginName, String loginPassword) {
-
-		UserResponseDTO userResponseDTO = null;
-		Resources<CustomMessage> resource = null;
-
-		try {
-			List<CustomMessage> customMessageList = null;
-
-			UserEntity entityResponse = userRepository.findByLoginNameAndLoginPassword(loginName, loginPassword);
-
-			if (entityResponse == null) {
-				customMessageList = ArrayListCustomMessage
-						.setMessage("The requested user does not exists. Please try again.", HttpStatus.NO_CONTENT);
-				resource = new Resources<>(customMessageList);
-				resource.add(linkTo(UserController.class).withSelfRel());
-
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			}
-
-			userResponseDTO = modelMapper.map(entityResponse, UserResponseDTO.class);
-
-		} catch (Exception e) {
-			logger.error("An error occurred! {}", e.getMessage());
-			return CustomErrorType.returnResponsEntityError(e.getMessage());
-		}
-
-		return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
 
 	}
 

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -74,18 +73,18 @@ public class UserController {
 	}
 
 	/**
-	 * Retrieve user by user login name.
+	 * Retrieve user by user email.
 	 * 
-	 * @param loginName user login name
+	 * @param email user email
 	 * @return ResponseEntity with status and userResponseDTO
 	 */
 	@GetMapping(path = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@ApiOperation(value = "Retrieve user by login name.")
-	public ResponseEntity<UserResponseDTO> getUserByLoginName(@PathVariable("loginName") String loginName) {
+	@ApiOperation(value = "Retrieve user by email.")
+	public ResponseEntity<UserResponseDTO> getUserByEmail(@PathVariable("email") String email) {
 
-		logger.info("Fetching user by loginName with loginName {} ", loginName);
-		return userService.getUserByLoginName(loginName);
+		logger.info("Fetching user with email {} ", email);
+		return userService.getUserByEmail(email);
 	}
 
 	/**

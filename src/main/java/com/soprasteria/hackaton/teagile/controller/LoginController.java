@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.soprasteria.hackaton.teagile.dto.UserResponseDTO;
 import com.soprasteria.hackaton.teagile.service.LoginService;
 
 import io.swagger.annotations.Api;
@@ -35,38 +34,19 @@ public class LoginController {
 	LoginService loginService;
 
 	/**
-	 * Check login by loginName and loginPassword.
+	 * Check login by email and password.
 	 * 
-	 * @param loginName     user login name
-	 * @param loginPassword user login password
+	 * @param email    user email
+	 * @param password user password
 	 * @return ResponseEntity with status and userResponseDTO
 	 */
 	@GetMapping(path = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve user by login credentials.")
-	public ResponseEntity<?> getLogin(@RequestParam("loginName") String loginName,
-			@RequestParam("loginPassword") String loginPassword) {
+	public ResponseEntity<?> getLogin(@RequestParam("email") String email, @RequestParam("password") String password) {
 
-		logger.info("Fetching user by loginName and LoginPassword with loginName {} ", loginName);
-		return loginService.getLogin(loginName, loginPassword);
-
-	}
-
-	/**
-	 * Retrieve user by loginName and loginPassword.
-	 * 
-	 * @param loginName     user login name
-	 * @param loginPassword user login password
-	 * @return ResponseEntity with status and userResponseDTO
-	 */
-	@GetMapping(path = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	@ApiOperation(value = "Retrieve user by login credentials.")
-	public ResponseEntity<UserResponseDTO> getUserByLogin(@RequestParam("loginName") String loginName,
-			@RequestParam("loginPassword") String loginPassword) {
-
-		logger.info("Fetching user by loginName and LoginPassword with loginName {} ", loginName);
-		return loginService.getUserByLogin(loginName, loginPassword);
+		logger.info("Fetching user by email and password with email {} ", email);
+		return loginService.getLogin(email, password);
 
 	}
 }

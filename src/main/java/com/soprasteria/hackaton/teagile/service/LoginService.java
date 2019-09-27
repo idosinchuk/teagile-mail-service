@@ -22,13 +22,4 @@ public interface LoginService {
 	 */
 	ResponseEntity<?> getLogin(String loginName, String loginPassword);
 
-	/**
-	 * Find user by login passing the loginName and loginPassword.
-	 * 
-	 * @param loginName     user login name
-	 * @param loginPassword user login password
-	 * @return {@link UserResponseDTO}
-	 */
-	ResponseEntity<UserResponseDTO> getUserByLogin(String loginName, String loginPassword);
-
 }

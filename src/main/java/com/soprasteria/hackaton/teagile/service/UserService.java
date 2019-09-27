@@ -32,12 +32,21 @@ public interface UserService {
 	ResponseEntity<UserResponseDTO> getUser(int id);
 
 	/**
-	 * Find user by user login name.
+	 * Find user by email.
 	 * 
-	 * @param loginName user login name
+	 * @param email user email
 	 * @return {@link UserResponseDTO}
 	 */
-	ResponseEntity<UserResponseDTO> getUserByLoginName(String loginName);
+	ResponseEntity<UserResponseDTO> getUserByEmail(String email);
+
+	/**
+	 * Find user by email and password.
+	 * 
+	 * @param email    user email
+	 * @param password user password
+	 * @return {@link UserResponseDTO}
+	 */
+	ResponseEntity<UserResponseDTO> getUserByEmailAndPassword(String email, String password);
 
 	/**
 	 * Add a user.

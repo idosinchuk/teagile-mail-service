@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<UserResponseDTO> getUserByLoginName(String loginName) {
+	public ResponseEntity<UserResponseDTO> getUserByEmail(String email) {
 
 		UserResponseDTO userResponseDTO = null;
 		Resources<CustomMessage> resource = null;
@@ -103,7 +103,41 @@ public class UserServiceImpl implements UserService {
 		try {
 			List<CustomMessage> customMessageList = null;
 
-			UserEntity entityResponse = userRepository.findByLoginName(loginName);
+			UserEntity entityResponse = userRepository.findByEmail(email);
+
+			if (entityResponse == null) {
+				customMessageList = ArrayListCustomMessage
+						.setMessage("The requested user does not exists. Please try again.", HttpStatus.NO_CONTENT);
+				resource = new Resources<>(customMessageList);
+				resource.add(linkTo(UserController.class).withSelfRel());
+
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+
+			userResponseDTO = modelMapper.map(entityResponse, UserResponseDTO.class);
+
+		} catch (Exception e) {
+			logger.error("An error occurred! {}", e.getMessage());
+			return CustomErrorType.returnResponsEntityError(e.getMessage());
+		}
+
+		return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<UserResponseDTO> getUserByEmailAndPassword(String email, String password) {
+
+		UserResponseDTO userResponseDTO = null;
+		Resources<CustomMessage> resource = null;
+
+		try {
+			List<CustomMessage> customMessageList = null;
+
+			UserEntity entityResponse = userRepository.findByEmailAndPassword(email, password);
 
 			if (entityResponse == null) {
 				customMessageList = ArrayListCustomMessage
@@ -138,12 +172,12 @@ public class UserServiceImpl implements UserService {
 
 			UserEntity entityRequest = modelMapper.map(userRequestDTO, UserEntity.class);
 
-			UserEntity userEntity = userRepository.findByLoginName(userRequestDTO.getLoginName());
+			UserEntity userEntity = userRepository.findByEmail(userRequestDTO.getEmail());
 
-			// Check if loginName exists in the database
+			// Check if email exists in the database
 			if (userEntity != null) {
 				customMessageList = ArrayListCustomMessage.setMessage(
-						"The requested user actually exists. Please change the login name.", HttpStatus.BAD_REQUEST);
+						"The requested user actually exists. Please change the email.", HttpStatus.BAD_REQUEST);
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(UserController.class).withSelfRel());
 
