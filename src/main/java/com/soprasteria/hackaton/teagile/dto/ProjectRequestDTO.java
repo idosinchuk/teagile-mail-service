@@ -1,6 +1,7 @@
 package com.soprasteria.hackaton.teagile.dto;
 
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -25,6 +26,7 @@ public class ProjectRequestDTO {
 	@ApiModelProperty(value = "Id", example = "1")
 	private int id;
 
+	@NotNull
 	@ApiModelProperty(value = "Project name", example = "TEAgile")
 	private String name;
 

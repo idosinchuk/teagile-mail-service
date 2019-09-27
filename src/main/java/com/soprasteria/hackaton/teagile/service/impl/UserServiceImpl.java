@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private ModelMapper modelMapper;
+
+	@Autowired
+	private JavaMailSender javaMailSender;
 
 	public static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -190,6 +194,9 @@ public class UserServiceImpl implements UserService {
 
 			userRepository.save(entityRequest);
 
+			// Send email
+			sendEmail(userRequestDTO.getEmail());
+
 			customMessageList = ArrayListCustomMessage.setMessage("Created new user", HttpStatus.CREATED);
 
 			resource = new Resources<>(customMessageList);
@@ -257,4 +264,5 @@ public class UserServiceImpl implements UserService {
 		return new ResponseEntity<>(resource, HttpStatus.OK);
 
 	}
+
 }

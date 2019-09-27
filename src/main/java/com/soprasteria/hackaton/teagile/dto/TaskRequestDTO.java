@@ -1,5 +1,7 @@
 package com.soprasteria.hackaton.teagile.dto;
 
+import javax.validation.constraints.NotNull;
+
 import org.springframework.data.annotation.Id;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -25,6 +27,7 @@ public class TaskRequestDTO {
 	@ApiModelProperty(value = "Id", example = "1")
 	private int id;
 
+	@NotNull
 	@ApiModelProperty(value = "Task title", example = "TEAgile")
 	private String title;
 
