@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   #Cambiame:
-  name: cv-service
+  name: teagile-core-service
 spec:
   ports:
   - port: 8080
@@ -12,55 +12,58 @@ spec:
   #Ojo con los selectores, deben coincidir con los "labels" del deployment"
   #Cambiame:
   selector:
-    app: cv-service
-    tier: frontend
+    app: teagile-core-service
+    tier: backend
   type: LoadBalancer
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
 #Cambiame:
 metadata:
-  name: cv-service-deployment
+  name: teagile-core-service-deployment
 spec:
   selector:
     matchLabels:
       #Cambiame:
-      app: cv-service
-      tier: frontend
+      app: teagile-core-service
+      tier: backend
   template:
     metadata:
 
       #Ojo con los selectores, deben coincidir con los "labels" del service"
       #Cambiame:
       labels:
-        app: cv-service
-        tier: frontend
+        app: teagile-core-service
+        tier: backend
     spec:
       imagePullSecrets:
       - name: docker-registry-innersource
       containers:
       #Cambiame:
-      - image: registry-innersource.soprasteria.com/smartup/sopra-profile/cv-service:develop
-        name: cv-service
+      - image: registry-innersource.soprasteria.com/smartup/sopra-profile/teagile-core-service:develop
+        name: teagile-core-service
         imagePullPolicy: Always
+        env:
+          - name: SERVER_PORT
+            value: 8080
 
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   #Cambiame:
-  name: cv-service
+  name: teagile-core-service
   annotations:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
   #Cambiame: (solo la parte de antes de .apps.12b...)
-  - host: cv-service.apps.12b5129e45db47179d12.westeurope.aksapp.io
+  - host: teagile-core-service.apps.12b5129e45db47179d12.westeurope.aksapp.io
     http:
       paths:
       #Cambiame:
       - backend:
           #Cambiame:
           #Ojo!... Tiene que coincidir con el nombre del servicio.
-          serviceName: cv-service
+          serviceName: teagile-core-service
           servicePort: 8080
