@@ -71,6 +71,31 @@ public class UserController {
 	}
 
 	/**
+	 * Retrieve user by Id.
+	 * 
+	 * @param id user Id
+	 * @return ResponseEntity with status and userResponseDTO
+	 */
+	@GetMapping(path = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	@ApiOperation(value = "Retrieve user by Id.")
+	public ResponseEntity<?> getUser(@PathVariable("id") int id) {
+
+		logger.info("Fetching user with id {} ", id);
+
+		UserResponseDTO userResponseDTO = null;
+
+		try {
+			userResponseDTO = userService.getUser(id);
+			return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
+
+		} catch (Exception e) {
+			logger.error("An error occurred! {}", e.getMessage());
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
 	 * Retrieve user by loginName and loginPassword.
 	 * 
 	 * @param loginName     user login name
@@ -80,7 +105,7 @@ public class UserController {
 	@GetMapping(path = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve user by the userCode.")
-	public ResponseEntity<?> getUserByLogin(@RequestParam("loginName") String loginName,
+	public ResponseEntity<?> getxogin(@RequestParam("loginName") String loginName,
 			@RequestParam("loginPassword") String loginPassword) {
 
 		logger.info("Fetching user with loginName {} ", loginName);

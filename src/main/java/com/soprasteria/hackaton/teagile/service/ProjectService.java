@@ -25,7 +25,7 @@ public interface ProjectService {
 	List<ProjectResponseDTO> getAllProjects();
 
 	/**
-	 * Find projects by id.
+	 * Find project by id.
 	 * 
 	 * @param id project id
 	 * @return {@link ProjectResponseDTO}

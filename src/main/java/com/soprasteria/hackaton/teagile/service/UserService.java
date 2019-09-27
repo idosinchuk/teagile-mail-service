@@ -24,6 +24,14 @@ public interface UserService {
 	List<UserResponseDTO> getAllUsers();
 
 	/**
+	 * Find user by id.
+	 * 
+	 * @param id user id
+	 * @return {@link UserResponseDTO}
+	 */
+	UserResponseDTO getUser(int id);
+
+	/**
 	 * Find user by login passing the loginName and loginPassword.
 	 * 
 	 * @param loginName     user login name

@@ -139,6 +139,7 @@ public class ProjectServiceImpl implements ProjectService {
 				projectRequestDTO.setId(projectEntity.getId());
 
 				ProjectEntity entityRequest = modelMapper.map(projectRequestDTO, ProjectEntity.class);
+				projectRepository.save(entityRequest);
 
 			} else {
 				customMessageList = ArrayListCustomMessage.setMessage("Project id " + id + " Not Found!",
