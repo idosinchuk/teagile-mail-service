@@ -1,0 +1,4 @@
+include:
+- project: 'smartup/cicd/gitlab-templates'
+  file: '/.gitlab-ci-java8-to-k8s.yml'
+  ref: master

@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Service
+metadata:
+  #Cambiame:
+  name: cv-service
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+    name: 8080-tcp
+
+  #Ojo con los selectores, deben coincidir con los "labels" del deployment"
+  #Cambiame:
+  selector:
+    app: cv-service
+    tier: frontend
+  type: LoadBalancer
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+#Cambiame:
+metadata:
+  name: cv-service-deployment
+spec:
+  selector:
+    matchLabels:
+      #Cambiame:
+      app: cv-service
+      tier: frontend
+  template:
+    metadata:
+
+      #Ojo con los selectores, deben coincidir con los "labels" del service"
+      #Cambiame:
+      labels:
+        app: cv-service
+        tier: frontend
+    spec:
+      imagePullSecrets:
+      - name: docker-registry-innersource
+      containers:
+      #Cambiame:
+      - image: registry-innersource.soprasteria.com/smartup/sopra-profile/cv-service:develop
+        name: cv-service
+        imagePullPolicy: Always
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  #Cambiame:
+  name: cv-service
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  #Cambiame: (solo la parte de antes de .apps.12b...)
+  - host: cv-service.apps.12b5129e45db47179d12.westeurope.aksapp.io
+    http:
+      paths:
+      #Cambiame:
+      - backend:
+          #Cambiame:
+          #Ojo!... Tiene que coincidir con el nombre del servicio.
+          serviceName: cv-service
+          servicePort: 8080
