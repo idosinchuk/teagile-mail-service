@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +23,7 @@ import com.soprasteria.hackaton.teagile.controller.UserController;
 import com.soprasteria.hackaton.teagile.dto.UserRequestDTO;
 import com.soprasteria.hackaton.teagile.dto.UserResponseDTO;
 import com.soprasteria.hackaton.teagile.entity.UserEntity;
+import com.soprasteria.hackaton.teagile.mail.MailClient;
 import com.soprasteria.hackaton.teagile.repository.UserRepository;
 import com.soprasteria.hackaton.teagile.service.UserService;
 
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 	private ModelMapper modelMapper;
 
 	@Autowired
-	private JavaMailSender javaMailSender;
+	MailClient mailClient;
 
 	public static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -194,8 +194,10 @@ public class UserServiceImpl implements UserService {
 
 			userRepository.save(entityRequest);
 
+			String type = "RegistrationWelcome";
+
 			// Send email
-			// sendEmail(userRequestDTO.getEmail());
+			mailClient.prepareAndSend(userRequestDTO.getEmail(), type);
 
 			customMessageList = ArrayListCustomMessage.setMessage("Created new user", HttpStatus.CREATED);
 
@@ -275,7 +277,7 @@ public class UserServiceImpl implements UserService {
 
 		try {
 			userRepository.deleteById(id);
-	
+
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
