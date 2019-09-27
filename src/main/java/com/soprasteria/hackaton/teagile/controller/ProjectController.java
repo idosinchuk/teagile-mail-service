@@ -26,14 +26,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
- * Controller for project
+ * Controller for Project
  * 
  * @author Igor Dosinchuk
  * @author Luis Rapestre
  * 
  */
 @RestController
-@Api(value = "API Rest for insurance projects.")
+@Api(value = "API Rest for Project.")
 @RequestMapping(value = "/api/v1")
 public class ProjectController {
 

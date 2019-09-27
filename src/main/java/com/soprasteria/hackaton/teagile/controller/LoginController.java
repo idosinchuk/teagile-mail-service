@@ -17,14 +17,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
- * Controller for user
+ * Controller for Login
  * 
  * @author Igor Dosinchuk
  * @author Luis Rapestre
  * 
  */
 @RestController
-@Api(value = "API Rest for insurance users.")
+@Api(value = "API Rest for Login.")
 @RequestMapping(value = "/api/v1")
 public class LoginController {
 

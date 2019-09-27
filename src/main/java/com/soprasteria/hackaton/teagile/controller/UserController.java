@@ -34,7 +34,7 @@ import io.swagger.annotations.ApiOperation;
  * 
  */
 @RestController
-@Api(value = "API Rest for insurance users.")
+@Api(value = "API Rest for User.")
 @RequestMapping(value = "/api/v1")
 public class UserController {
 
@@ -79,7 +79,7 @@ public class UserController {
 	 * @param email user email
 	 * @return ResponseEntity with status and userResponseDTO
 	 */
-	@GetMapping(path = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/users-email", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve user by email.")
 	public ResponseEntity<UserResponseDTO> getUserByEmail(@PathVariable("email") String email) {
@@ -95,7 +95,7 @@ public class UserController {
 	 * @param password user password
 	 * @return ResponseEntity with status and userResponseDTO
 	 */
-	@GetMapping(path = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/users-login", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve user by login credentials.")
 	public ResponseEntity<UserResponseDTO> getUserByLogin(@RequestParam("email") String email,
