@@ -126,26 +126,11 @@ public class ProjectServiceImpl implements ProjectService {
 
 			ProjectEntity projectEntityRequest = modelMapper.map(projectRequestDTO, ProjectEntity.class);
 
-			ProjectEntity projectEntity = projectRepository.findByName(projectRequestDTO.getName());
-
-			// Check if projectName exists in the database
-			if (projectEntity != null) {
-				customMessageList = ArrayListCustomMessage.setMessage(
-						"The requested project actually exists. Please change the project name.",
-						HttpStatus.BAD_REQUEST);
-				resource = new Resources<>(customMessageList);
-				resource.add(linkTo(ProjectController.class).withSelfRel());
-
-				return new ResponseEntity<>(resource, HttpStatus.BAD_REQUEST);
-			}
-
 			ProjectEntity projectEntityResponse = projectRepository.save(projectEntityRequest);
 
 			// If project was created successfully, add project to user
-			if (projectEntityResponse != null) {
-				List<ProjectEntity> projects = new ArrayList<>();
-				projects.add(projectEntityResponse);
-				userEntity.setProjects(projects);
+			if (projectEntityResponse != null) {										
+				userEntity.getProjects().add(projectEntityResponse);
 				userRepository.save(userEntity);
 			}
 
