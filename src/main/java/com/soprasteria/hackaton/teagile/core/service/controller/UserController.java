@@ -108,20 +108,20 @@ public class UserController {
 	}
 
 	/**
-	 * Add project to user by userRequestDTO and projectId.
+	 * Add user to project by userRequestDTO and projectId.
 	 * 
-	 * @param email     user email
-	 * @param projectId project id
+	 * @param userRequestDTO request object
+	 * @param projectId      project id
 	 * @return ResponseEntity with status and projectResponseDTO
 	 */
-	@GetMapping(path = "/assign-project", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/assign-project", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@ApiOperation(value = "Retrieve project by the projectCode.")
+	@ApiOperation(value = "Add project to user")
 	public ResponseEntity<UserResponseDTO> addUserToProject(@RequestBody UserRequestDTO userRequestDTO,
-			@RequestParam("id") int projectId) {
+			@RequestParam("projectId") int projectId) {
 
 		logger.info("Add project to user with userRequestDTO and projectId {}", userRequestDTO, projectId);
-		return userService.addProjectToUser(userRequestDTO, projectId);
+		return userService.addUserToProject(userRequestDTO, projectId);
 	}
 
 	/**

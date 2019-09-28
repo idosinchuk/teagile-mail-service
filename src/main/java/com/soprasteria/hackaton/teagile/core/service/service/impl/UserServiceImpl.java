@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
@@ -177,7 +178,7 @@ public class UserServiceImpl implements UserService {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<UserResponseDTO> addProjectToUser(UserRequestDTO userRequestDTO, int projectId) {
+	public ResponseEntity<UserResponseDTO> addUserToProject(UserRequestDTO userRequestDTO, int projectId) {
 
 		UserResponseDTO userResponseDTO = null;
 		Resources<CustomMessage> resource = null;
@@ -220,6 +221,12 @@ public class UserServiceImpl implements UserService {
 
 			// If user not exists, create user.
 			else {
+				List<ProjectEntity> projects = new ArrayList<>();
+				projects.add(projectEntityResponse);
+				// set project to new user
+				userEntityRequest.setProjects(projects);
+				// Set default password
+				userEntityRequest.setPassword(RandomStringUtils.randomAlphabetic(10));
 				userRepository.save(userEntityRequest);
 
 				String type = "RegistrationWelcome";

@@ -50,13 +50,13 @@ public interface UserService {
 	ResponseEntity<UserResponseDTO> getUserByEmailAndPassword(String email, String password);
 
 	/**
-	 * Add user to project with email and projectId.
+	 * Add project to user with userRequestDTO and projectId.
 	 * 
 	 * @param userRequestDTO object to save
 	 * @param projectId      project id
 	 * @return {@link ProjectResponseDTO}
 	 */
-	ResponseEntity<UserResponseDTO> addProjectToUser(UserRequestDTO userRequestDTO, int projectId);
+	ResponseEntity<UserResponseDTO> addUserToProject(UserRequestDTO userRequestDTO, int projectId);
 
 	/**
 	 * Add a user.

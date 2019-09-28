@@ -67,8 +67,8 @@ public class ProjectController {
 	 */
 	@GetMapping(path = "/projects/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@ApiOperation(value = "Retrieve project by the projectCode.")
-	public ResponseEntity<ProjectResponseDTO> getProject(@PathVariable("projectCode") int id) {
+	@ApiOperation(value = "Retrieve project by id.")
+	public ResponseEntity<ProjectResponseDTO> getProject(@PathVariable("id") int id) {
 
 		logger.info("Fetching project with id {}", id);
 		return projectService.getProject(id);
