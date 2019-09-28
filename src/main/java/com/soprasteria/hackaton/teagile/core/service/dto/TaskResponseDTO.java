@@ -44,6 +44,6 @@ public class TaskResponseDTO {
 	private String status;
 
 	@ApiModelProperty(value = "Project Id", example = "1")
-	private String projectId;
+	private int projectId;
 
 }

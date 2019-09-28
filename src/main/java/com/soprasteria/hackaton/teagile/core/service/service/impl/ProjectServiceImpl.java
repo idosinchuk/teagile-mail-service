@@ -53,15 +53,15 @@ public class ProjectServiceImpl implements ProjectService {
 	 */
 	public ResponseEntity<List<ProjectResponseDTO>> getAllProjectsByUserId(int userId) {
 
-		// List<ProjectEntity> entityResponse =
-		// projectRepository.findAllByUserId(userId);
-		List<ProjectEntity> entityResponse = null;
-		if (entityResponse.isEmpty()) {
+		UserEntity entityResponse = userRepository.findById(userId);
+
+		if (entityResponse.getProjects().isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 		// Convert Entity response to DTO
-		List<ProjectResponseDTO> projects = modelMapper.map(entityResponse, new TypeToken<List<ProjectResponseDTO>>() {
-		}.getType());
+		List<ProjectResponseDTO> projects = modelMapper.map(entityResponse.getProjects(),
+				new TypeToken<List<ProjectResponseDTO>>() {
+				}.getType());
 
 		return new ResponseEntity<>(projects, HttpStatus.OK);
 
