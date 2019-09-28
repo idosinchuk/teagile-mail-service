@@ -48,8 +48,8 @@ public class MeetingEntity {
 	@Column(name = "event_repeat_frequency", nullable = false)
 	private int eventRepeatFrequency;
 
-	@Column(name = "label_color")
-	private String labelColor;
+	@Column(name = "priority")
+	private int priority;
 
 	@Column(name = "status")
 	private String status;

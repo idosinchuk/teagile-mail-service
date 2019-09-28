@@ -45,18 +45,18 @@ public class ProjectController {
 	ProjectService projectService;
 
 	/**
-	 * Retrieve list of all projects according to the search criteria.
+	 * Retrieve list of all projects filtered by userId
 	 * 
 	 * @param pageable paging fields
-	 * @return ResponseEntity with paged list of all projects, headers and status
+	 * @return ResponseEntity with list of projects filtered by userId
 	 */
 	@GetMapping(path = "/projects", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@ApiOperation(value = "Retrieve list of all projects.")
-	public ResponseEntity<List<ProjectResponseDTO>> getAllProjects() {
+	@ApiOperation(value = "Retrieve list of all projects filtered by userId")
+	public ResponseEntity<List<ProjectResponseDTO>> getAllProjectsByUserId(@RequestParam("userId") int userId) {
 
-		logger.info("Fetching all projects");
-		return projectService.getAllProjects();
+		logger.info("Fetching all projects by UserId");
+		return projectService.getAllProjectsByUserId(userId);
 	}
 
 	/**

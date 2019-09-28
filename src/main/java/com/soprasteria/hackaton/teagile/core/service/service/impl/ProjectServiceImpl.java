@@ -51,10 +51,11 @@ public class ProjectServiceImpl implements ProjectService {
 	/**
 	 * {@inheritDoc}
 	 */
-	public ResponseEntity<List<ProjectResponseDTO>> getAllProjects() {
+	public ResponseEntity<List<ProjectResponseDTO>> getAllProjectsByUserId(int userId) {
 
-		List<ProjectEntity> entityResponse = projectRepository.findAll();
-
+		// List<ProjectEntity> entityResponse =
+		// projectRepository.findAllByUserId(userId);
+		List<ProjectEntity> entityResponse = null;
 		if (entityResponse.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}

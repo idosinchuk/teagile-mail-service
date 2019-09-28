@@ -17,12 +17,12 @@ import com.soprasteria.hackaton.teagile.core.service.dto.ProjectResponseDTO;
 public interface ProjectService {
 
 	/**
-	 * Retrieve list of all projects.
+	 * Retrieve list of all projects filtered by userId
 	 * 
-	 * @param pageable object for pagination
+	 * @param userId user id
 	 * @return Page of {@link ProjectResponseDTO}
 	 */
-	ResponseEntity<List<ProjectResponseDTO>> getAllProjects();
+	ResponseEntity<List<ProjectResponseDTO>> getAllProjectsByUserId(int userId);
 
 	/**
 	 * Find project by id.

@@ -41,7 +41,7 @@ public class TaskRequestDTO {
 	private String endDate;
 
 	@ApiModelProperty(value = "Priority", example = "1")
-	private String priority;
+	private int priority;
 
 	@ApiModelProperty(value = "Task status", example = "Created")
 	private String status;

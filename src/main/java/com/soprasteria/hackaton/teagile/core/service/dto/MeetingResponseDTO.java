@@ -40,8 +40,8 @@ public class MeetingResponseDTO {
 	@ApiModelProperty(value = "Event repetition frequency", example = "5")
 	private int eventRepeatFrequency;
 
-	@ApiModelProperty(value = "Meeting label color", example = "blue")
-	private String labelColor;
+	@ApiModelProperty(value = "Priority", example = "1")
+	private int priority;
 
 	@ApiModelProperty(value = "Meeting reminder in minutes", example = "60")
 	private int reminder;
