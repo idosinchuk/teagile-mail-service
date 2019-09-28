@@ -45,5 +45,8 @@ public class TaskRequestDTO {
 
 	@ApiModelProperty(value = "Task status", example = "Created")
 	private String status;
+	
+	@ApiModelProperty(value = "Project Id", example = "1")
+	private int projectId;
 
 }

@@ -208,14 +208,6 @@ public class UserServiceImpl implements UserService {
 			// If user exists, add project to user
 			if (userEntity != null) {
 				List<ProjectEntity> projects = new ArrayList<>();
-//				if (userEntity.getProjects().isEmpty()) {
-//					projects.add(projectEntityResponse);
-//					userEntity.setProjects(projects);
-//				} else {
-//					projects = userEntity.getProjects();
-//					projects.add(projectEntityResponse);
-//					userEntity.setProjects(projects);
-//				}
 				projects = userEntity.getProjects();
 				projects.add(projectEntityResponse);
 				userEntity.setProjects(projects);
