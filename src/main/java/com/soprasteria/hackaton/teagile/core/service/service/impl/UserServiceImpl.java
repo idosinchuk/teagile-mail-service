@@ -288,6 +288,10 @@ public class UserServiceImpl implements UserService {
 				return new ResponseEntity<>(resource, HttpStatus.BAD_REQUEST);
 			}
 
+			byte[] passwordBytes = Base64.getDecoder().decode(userRequestDTO.getPassword());
+			String decodedPassword = new String(passwordBytes);
+			entityRequest.setPassword(decodedPassword);
+
 			userRepository.save(entityRequest);
 
 			String type = "RegistrationWelcome";

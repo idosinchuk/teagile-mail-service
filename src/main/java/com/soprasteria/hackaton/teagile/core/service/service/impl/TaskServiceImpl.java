@@ -131,8 +131,8 @@ public class TaskServiceImpl implements TaskService {
 			}
 
 			// If priority is null, set default priority.
-			if (taskRequestDTO.getPriority() == null) {
-				taskRequestDTO.setPriority("5");
+			if (taskRequestDTO.getPriority() == 0) {
+				taskRequestDTO.setPriority(5);
 			}
 
 			// If status is null, set default status.
