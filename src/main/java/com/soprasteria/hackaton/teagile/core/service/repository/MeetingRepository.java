@@ -16,6 +16,8 @@ public interface MeetingRepository extends JpaRepository<MeetingEntity, Integer>
 
 	MeetingEntity findByIdAndProjectId(int id, int projectId);
 
+	void deleteByIdAndProjectId(int id, int projectId);
+
 	List<MeetingEntity> findAllByProjectId(int projectId);
 
 }

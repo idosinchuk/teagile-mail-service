@@ -75,40 +75,6 @@ public class MeetingServiceImpl implements MeetingService {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<MeetingResponseDTO> getMeeting(int id, int projectId) {
-
-		MeetingResponseDTO meetingResponseDTO = null;
-		Resources<CustomMessage> resource = null;
-
-		try {
-			List<CustomMessage> customMessageList = null;
-
-			MeetingEntity entityResponse = meetingRepository.findByIdAndProjectId(id, projectId);
-
-			if (entityResponse == null) {
-				customMessageList = ArrayListCustomMessage
-						.setMessage("The requested Meeting does not exists. Please try again.", HttpStatus.NO_CONTENT);
-				resource = new Resources<>(customMessageList);
-				resource.add(linkTo(MeetingController.class).withSelfRel());
-
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			}
-
-			meetingResponseDTO = modelMapper.map(entityResponse, MeetingResponseDTO.class);
-
-		} catch (Exception e) {
-			logger.error("An error occurred! {}", e.getMessage());
-			return CustomErrorType.returnResponsEntityError(e.getMessage());
-		}
-
-		return new ResponseEntity<>(meetingResponseDTO, HttpStatus.OK);
-
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
 	@Transactional
 	public ResponseEntity<MeetingResponseDTO> addMeeting(MeetingRequestDTO meetingRequestDTO) {
 
@@ -165,7 +131,8 @@ public class MeetingServiceImpl implements MeetingService {
 	 * {@inheritDoc}
 	 */
 	@Transactional
-	public ResponseEntity<MeetingResponseDTO> updateMeeting(int id, MeetingRequestDTO meetingRequestDTO) {
+	public ResponseEntity<MeetingResponseDTO> updateMeeting(int id, int projectId,
+			MeetingRequestDTO meetingRequestDTO) {
 
 		Resources<CustomMessage> resource = null;
 		MeetingResponseDTO meetingResponseDTO = null;
@@ -185,7 +152,7 @@ public class MeetingServiceImpl implements MeetingService {
 			}
 
 			// Find Meeting by ID for check if exists in DB
-			MeetingEntity meetingEntity = meetingRepository.findByIdAndProjectId(id);
+			MeetingEntity meetingEntity = meetingRepository.findByIdAndProjectId(id, projectId);
 
 			// If exists
 			if (meetingEntity != null) {
@@ -221,12 +188,12 @@ public class MeetingServiceImpl implements MeetingService {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<MeetingResponseDTO> deleteMeeting(int id) {
+	public ResponseEntity<MeetingResponseDTO> deleteMeeting(int id, int projectId) {
 
 		MeetingResponseDTO meetingResponseDTO = null;
 
 		try {
-			meetingRepository.deleteById(id);
+			meetingRepository.deleteByIdAndProjectId(id, projectId);
 
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());

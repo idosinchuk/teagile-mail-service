@@ -18,14 +18,6 @@ public interface TaskService {
 	ResponseEntity<List<TaskResponseDTO>> getAllTasksByProjectId(int projectId);
 
 	/**
-	 * Find task by id.
-	 * 
-	 * @param id task id
-	 * @return {@link TaskResponseDTO}
-	 */
-	ResponseEntity<TaskResponseDTO> getTask(int id);
-
-	/**
 	 * Add a task.
 	 * 
 	 * @param taskRequestDTO object to save
@@ -38,18 +30,21 @@ public interface TaskService {
 	 * Update the Task.
 	 * 
 	 * @param id             task id
+	 * @param id             project id
 	 * @param taskRequestDTO object to save
 	 * 
 	 * @return {@link TaskResponseDTO}
 	 */
-	ResponseEntity<TaskResponseDTO> updateTask(int id, TaskRequestDTO taskRequestDTO);
+	ResponseEntity<TaskResponseDTO> updateTask(int id, int projectId, TaskRequestDTO taskRequestDTO);
 
 	/**
 	 * Delete task by id.
 	 * 
 	 * @param id task id
+	 * @param id project id
+	 * 
 	 * @return {@link TaskResponseDTO}
 	 */
-	ResponseEntity<TaskResponseDTO> deleteTask(int id);
+	ResponseEntity<TaskResponseDTO> deleteTask(int id, int projectId);
 
 }

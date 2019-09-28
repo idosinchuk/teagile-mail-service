@@ -18,14 +18,6 @@ public interface MeetingService {
 	ResponseEntity<List<MeetingResponseDTO>> getAllMeetingsByProjectId(int projectId);
 
 	/**
-	 * Find meeting by id.
-	 * 
-	 * @param id meeting id
-	 * @return {@link MeetingResponseDTO}
-	 */
-	ResponseEntity<MeetingResponseDTO> getMeeting(int id);
-
-	/**
 	 * Add a meeting.
 	 * 
 	 * @param meetingRequestDTO object to save
@@ -38,18 +30,22 @@ public interface MeetingService {
 	 * Update the Meeting.
 	 * 
 	 * @param id                meeting id
+	 * @param id                project id
+	 * 
 	 * @param meetingRequestDTO object to save
 	 * 
 	 * @return {@link MeetingResponseDTO}
 	 */
-	ResponseEntity<MeetingResponseDTO> updateMeeting(int id, MeetingRequestDTO meetingRequestDTO);
+	ResponseEntity<MeetingResponseDTO> updateMeeting(int id, int projectId, MeetingRequestDTO meetingRequestDTO);
 
 	/**
 	 * Delete meeting by id.
 	 * 
 	 * @param id meeting id
+	 * @param id project id
+	 * 
 	 * @return {@link MeetingResponseDTO}
 	 */
-	ResponseEntity<MeetingResponseDTO> deleteMeeting(int id);
+	ResponseEntity<MeetingResponseDTO> deleteMeeting(int id, int projectId);
 
 }

@@ -79,31 +79,35 @@ public class MeetingController {
 	 * Update a meeting
 	 * 
 	 * @param id                meeting id
+	 * @param id                project Id
+	 * 
 	 * @param meetingRequestDTO object to update
 	 * @return ResponseEntity with resource and status
 	 */
 	@PatchMapping(path = "/meetings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Update the meeting.")
-	public ResponseEntity<MeetingResponseDTO> updateMeeting(@PathVariable("id") int id,
+	public ResponseEntity<MeetingResponseDTO> updateMeeting(@PathVariable("id") int id, int projectId,
 			@RequestBody MeetingRequestDTO meetingRequestDTO) {
 
 		logger.info("Process patch meeting");
-		return meetingService.updateMeeting(id, meetingRequestDTO);
+		return meetingService.updateMeeting(id, projectId, meetingRequestDTO);
 	}
 
 	/**
 	 * Retrieve meeting by Id.
 	 * 
 	 * @param id meeting Id
+	 * @param id project Id
+	 * 
 	 * @return ResponseEntity with status and meetingResponseDTO
 	 */
 	@DeleteMapping(path = "/meetings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Delete meeting by Id.")
-	public ResponseEntity<MeetingResponseDTO> deleteMeeting(@PathVariable("id") int id) {
+	public ResponseEntity<MeetingResponseDTO> deleteMeeting(@PathVariable("id") int id, int projectId) {
 
 		logger.info("Deleting meeting with id {} ", id);
-		return meetingService.deleteMeeting(id);
+		return meetingService.deleteMeeting(id, projectId);
 	}
 }

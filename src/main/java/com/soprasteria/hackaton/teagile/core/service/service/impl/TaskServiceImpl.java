@@ -75,40 +75,6 @@ public class TaskServiceImpl implements TaskService {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<TaskResponseDTO> getTask(int id) {
-
-		TaskResponseDTO taskResponseDTO = null;
-		Resources<CustomMessage> resource = null;
-
-		try {
-			List<CustomMessage> customMessageList = null;
-
-			TaskEntity entityResponse = taskRepository.findById(id);
-
-			if (entityResponse == null) {
-				customMessageList = ArrayListCustomMessage
-						.setMessage("The requested Task does not exists. Please try again.", HttpStatus.NO_CONTENT);
-				resource = new Resources<>(customMessageList);
-				resource.add(linkTo(TaskController.class).withSelfRel());
-
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			}
-
-			taskResponseDTO = modelMapper.map(entityResponse, TaskResponseDTO.class);
-
-		} catch (Exception e) {
-			logger.error("An error occurred! {}", e.getMessage());
-			return CustomErrorType.returnResponsEntityError(e.getMessage());
-		}
-
-		return new ResponseEntity<>(taskResponseDTO, HttpStatus.OK);
-
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
 	@Transactional
 	public ResponseEntity<TaskResponseDTO> addTask(TaskRequestDTO taskRequestDTO) {
 
@@ -165,7 +131,7 @@ public class TaskServiceImpl implements TaskService {
 	 * {@inheritDoc}
 	 */
 	@Transactional
-	public ResponseEntity<TaskResponseDTO> updateTask(int id, TaskRequestDTO taskRequestDTO) {
+	public ResponseEntity<TaskResponseDTO> updateTask(int id, int projectId, TaskRequestDTO taskRequestDTO) {
 
 		Resources<CustomMessage> resource = null;
 		TaskResponseDTO taskResponseDTO = null;
@@ -185,7 +151,7 @@ public class TaskServiceImpl implements TaskService {
 			}
 
 			// Find Task by ID for check if exists in DB
-			TaskEntity taskEntity = taskRepository.findById(id);
+			TaskEntity taskEntity = taskRepository.findByIdAndProjectId(id, projectId);
 
 			// If exists
 			if (taskEntity != null) {
@@ -221,12 +187,12 @@ public class TaskServiceImpl implements TaskService {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<TaskResponseDTO> deleteTask(int id) {
+	public ResponseEntity<TaskResponseDTO> deleteTask(int id, int projectId) {
 
 		TaskResponseDTO taskResponseDTO = null;
 
 		try {
-			taskRepository.deleteById(id);
+			taskRepository.deleteByIdAndProjectId(id, projectId);
 
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
