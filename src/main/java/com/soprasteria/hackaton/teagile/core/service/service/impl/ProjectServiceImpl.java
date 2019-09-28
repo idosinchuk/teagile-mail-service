@@ -55,6 +55,9 @@ public class ProjectServiceImpl implements ProjectService {
 
 		List<ProjectEntity> entityResponse = projectRepository.findAll();
 
+		if (entityResponse.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
 		// Convert Entity response to DTO
 		List<ProjectResponseDTO> projects = modelMapper.map(entityResponse, new TypeToken<List<ProjectResponseDTO>>() {
 		}.getType());

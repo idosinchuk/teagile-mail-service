@@ -5,7 +5,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import java.util.Base64;
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +32,6 @@ public class LoginServiceImpl implements LoginService {
 
 	@Autowired
 	private UserRepository userRepository;
-
-	@Autowired
-	private ModelMapper modelMapper;
 
 	public static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 

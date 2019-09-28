@@ -61,6 +61,10 @@ public class UserServiceImpl implements UserService {
 
 		List<UserEntity> entityResponse = userRepository.findAll();
 
+		if (entityResponse == null) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+
 		// Convert Entity response to DTO
 		List<UserResponseDTO> users = modelMapper.map(entityResponse, new TypeToken<List<UserResponseDTO>>() {
 		}.getType());

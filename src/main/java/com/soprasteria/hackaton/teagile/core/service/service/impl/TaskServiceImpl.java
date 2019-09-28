@@ -2,11 +2,8 @@ package com.soprasteria.hackaton.teagile.core.service.service.impl;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
@@ -62,11 +59,15 @@ public class TaskServiceImpl implements TaskService {
 
 		List<TaskEntity> entityResponse = taskRepository.findAllByProjectId(projectId);
 
+		if (entityResponse == null) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+
 		// Convert Entity response to DTO
-		List<TaskResponseDTO> Tasks = modelMapper.map(entityResponse, new TypeToken<List<TaskResponseDTO>>() {
+		List<TaskResponseDTO> tasks = modelMapper.map(entityResponse, new TypeToken<List<TaskResponseDTO>>() {
 		}.getType());
 
-		return new ResponseEntity<>(Tasks, HttpStatus.OK);
+		return new ResponseEntity<>(tasks, HttpStatus.OK);
 
 	}
 
@@ -113,7 +114,7 @@ public class TaskServiceImpl implements TaskService {
 
 		Resources<CustomMessage> resource = null;
 		TaskResponseDTO taskResponseDTO = null;
-		
+
 		try {
 			List<CustomMessage> customMessageList = null;
 
@@ -158,7 +159,7 @@ public class TaskServiceImpl implements TaskService {
 
 		Resources<CustomMessage> resource = null;
 		TaskResponseDTO taskResponseDTO = null;
-		
+
 		try {
 
 			List<CustomMessage> customMessageList = null;

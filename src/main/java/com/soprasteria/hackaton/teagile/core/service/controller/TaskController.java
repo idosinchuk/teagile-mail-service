@@ -53,7 +53,7 @@ public class TaskController {
 	@GetMapping(path = "/tasks", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve list of all tasks.")
-	public ResponseEntity<List<TaskResponseDTO>> getAllTasksByProjectId(@PathVariable("projectId") int projectId) {
+	public ResponseEntity<List<TaskResponseDTO>> getAllTasksByProjectId(@RequestParam("projectId") int projectId) {
 
 		logger.info("Fetching all tasks by projectId");
 		return taskService.getAllTasksByProjectId(projectId);
@@ -84,7 +84,8 @@ public class TaskController {
 	@PatchMapping(path = "/tasks/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Update the task.")
-	public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable("id") int id, @RequestBody TaskRequestDTO taskRequestDTO) {
+	public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable("id") int id,
+			@RequestBody TaskRequestDTO taskRequestDTO) {
 
 		logger.info("Process patch task");
 		return taskService.updateTask(id, taskRequestDTO);
