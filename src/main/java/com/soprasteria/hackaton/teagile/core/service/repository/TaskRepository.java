@@ -14,7 +14,7 @@ import com.soprasteria.hackaton.teagile.core.service.entity.TaskEntity;
  */
 public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 
-	TaskEntity findById(int id);
+	TaskEntity findByIdAndProjectId(int id, int projectId);
 
 	List<TaskEntity> findAllByProjectId(int projectId);
 }

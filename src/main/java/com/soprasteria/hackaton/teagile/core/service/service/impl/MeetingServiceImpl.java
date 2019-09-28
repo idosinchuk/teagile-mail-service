@@ -18,28 +18,28 @@ import org.springframework.transaction.annotation.Transactional;
 import com.soprasteria.hackaton.teagile.core.service.common.ArrayListCustomMessage;
 import com.soprasteria.hackaton.teagile.core.service.common.CustomErrorType;
 import com.soprasteria.hackaton.teagile.core.service.common.CustomMessage;
-import com.soprasteria.hackaton.teagile.core.service.controller.TaskController;
+import com.soprasteria.hackaton.teagile.core.service.controller.MeetingController;
 import com.soprasteria.hackaton.teagile.core.service.controller.UserController;
-import com.soprasteria.hackaton.teagile.core.service.dto.TaskRequestDTO;
-import com.soprasteria.hackaton.teagile.core.service.dto.TaskResponseDTO;
+import com.soprasteria.hackaton.teagile.core.service.dto.MeetingRequestDTO;
+import com.soprasteria.hackaton.teagile.core.service.dto.MeetingResponseDTO;
+import com.soprasteria.hackaton.teagile.core.service.entity.MeetingEntity;
 import com.soprasteria.hackaton.teagile.core.service.entity.ProjectEntity;
-import com.soprasteria.hackaton.teagile.core.service.entity.TaskEntity;
 import com.soprasteria.hackaton.teagile.core.service.mail.MailClient;
+import com.soprasteria.hackaton.teagile.core.service.repository.MeetingRepository;
 import com.soprasteria.hackaton.teagile.core.service.repository.ProjectRepository;
-import com.soprasteria.hackaton.teagile.core.service.repository.TaskRepository;
-import com.soprasteria.hackaton.teagile.core.service.service.TaskService;
+import com.soprasteria.hackaton.teagile.core.service.service.MeetingService;
 
 /**
- * Implementation for Task service
+ * Implementation for Meeting service
  * 
  * @author Igor Dosinchuk
  *
  */
-@Service("Taskservice")
-public class TaskServiceImpl implements TaskService {
+@Service("Meetingservice")
+public class MeetingServiceImpl implements MeetingService {
 
 	@Autowired
-	private TaskRepository taskRepository;
+	private MeetingRepository meetingRepository;
 
 	@Autowired
 	private ProjectRepository projectRepository;
@@ -50,24 +50,24 @@ public class TaskServiceImpl implements TaskService {
 	@Autowired
 	MailClient mailClient;
 
-	public static final Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
+	public static final Logger logger = LoggerFactory.getLogger(MeetingServiceImpl.class);
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public ResponseEntity<List<TaskResponseDTO>> getAllTasksByProjectId(int projectId) {
+	public ResponseEntity<List<MeetingResponseDTO>> getAllMeetingsByProjectId(int projectId) {
 
-		List<TaskEntity> entityResponse = taskRepository.findAllByProjectId(projectId);
+		List<MeetingEntity> entityResponse = meetingRepository.findAllByProjectId(projectId);
 
 		if (entityResponse == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 
 		// Convert Entity response to DTO
-		List<TaskResponseDTO> tasks = modelMapper.map(entityResponse, new TypeToken<List<TaskResponseDTO>>() {
+		List<MeetingResponseDTO> meetings = modelMapper.map(entityResponse, new TypeToken<List<MeetingResponseDTO>>() {
 		}.getType());
 
-		return new ResponseEntity<>(tasks, HttpStatus.OK);
+		return new ResponseEntity<>(meetings, HttpStatus.OK);
 
 	}
 
@@ -75,33 +75,33 @@ public class TaskServiceImpl implements TaskService {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<TaskResponseDTO> getTask(int id) {
+	public ResponseEntity<MeetingResponseDTO> getMeeting(int id, int projectId) {
 
-		TaskResponseDTO taskResponseDTO = null;
+		MeetingResponseDTO meetingResponseDTO = null;
 		Resources<CustomMessage> resource = null;
 
 		try {
 			List<CustomMessage> customMessageList = null;
 
-			TaskEntity entityResponse = taskRepository.findById(id);
+			MeetingEntity entityResponse = meetingRepository.findByIdAndProjectId(id, projectId);
 
 			if (entityResponse == null) {
 				customMessageList = ArrayListCustomMessage
-						.setMessage("The requested Task does not exists. Please try again.", HttpStatus.NO_CONTENT);
+						.setMessage("The requested Meeting does not exists. Please try again.", HttpStatus.NO_CONTENT);
 				resource = new Resources<>(customMessageList);
-				resource.add(linkTo(TaskController.class).withSelfRel());
+				resource.add(linkTo(MeetingController.class).withSelfRel());
 
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
 
-			taskResponseDTO = modelMapper.map(entityResponse, TaskResponseDTO.class);
+			meetingResponseDTO = modelMapper.map(entityResponse, MeetingResponseDTO.class);
 
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
 		}
 
-		return new ResponseEntity<>(taskResponseDTO, HttpStatus.OK);
+		return new ResponseEntity<>(meetingResponseDTO, HttpStatus.OK);
 
 	}
 
@@ -110,15 +110,15 @@ public class TaskServiceImpl implements TaskService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public ResponseEntity<TaskResponseDTO> addTask(TaskRequestDTO taskRequestDTO) {
+	public ResponseEntity<MeetingResponseDTO> addMeeting(MeetingRequestDTO meetingRequestDTO) {
 
 		Resources<CustomMessage> resource = null;
-		TaskResponseDTO taskResponseDTO = null;
+		MeetingResponseDTO meetingResponseDTO = null;
 
 		try {
 			List<CustomMessage> customMessageList = null;
 
-			ProjectEntity projectEntity = projectRepository.findById(taskRequestDTO.getProjectId());
+			ProjectEntity projectEntity = projectRepository.findById(meetingRequestDTO.getProjectId());
 
 			// Check if projectId exists in the database
 			if (projectEntity == null) {
@@ -131,33 +131,33 @@ public class TaskServiceImpl implements TaskService {
 			}
 
 			// If priority is null, set default priority.
-			if (taskRequestDTO.getPriority() == 0) {
-				taskRequestDTO.setPriority(5);
+			if (meetingRequestDTO.getPriority() == 0) {
+				meetingRequestDTO.setPriority(5);
 			}
 
 			// If status is null, set default status.
-			if (taskRequestDTO.getStatus() == null) {
-				taskRequestDTO.setStatus("created");
+			if (meetingRequestDTO.getStatus() == null) {
+				meetingRequestDTO.setStatus("created");
 			}
 
-			// Convert taskRequestDTO to TaskEntity
-			TaskEntity entityRequest = modelMapper.map(taskRequestDTO, TaskEntity.class);
+			// Convert meetingRequestDTO to MeetingEntity
+			MeetingEntity entityRequest = modelMapper.map(meetingRequestDTO, MeetingEntity.class);
 
-			TaskEntity taskEntityResponse = taskRepository.save(entityRequest);
+			MeetingEntity meetingEntityResponse = meetingRepository.save(entityRequest);
 
-			// Convert taskEntityResponse to TaskResponseDTO
-			taskResponseDTO = modelMapper.map(taskEntityResponse, TaskResponseDTO.class);
+			// Convert meetingEntityResponse to MeetingResponseDTO
+			meetingResponseDTO = modelMapper.map(meetingEntityResponse, MeetingResponseDTO.class);
 
-			customMessageList = ArrayListCustomMessage.setMessage("Created new Task", HttpStatus.CREATED);
+			customMessageList = ArrayListCustomMessage.setMessage("Created new Meeting", HttpStatus.CREATED);
 
 			resource = new Resources<>(customMessageList);
-			resource.add(linkTo(TaskController.class).withSelfRel());
+			resource.add(linkTo(MeetingController.class).withSelfRel());
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
 		}
 
-		return new ResponseEntity<>(taskResponseDTO, HttpStatus.OK);
+		return new ResponseEntity<>(meetingResponseDTO, HttpStatus.OK);
 
 	}
 
@@ -165,55 +165,55 @@ public class TaskServiceImpl implements TaskService {
 	 * {@inheritDoc}
 	 */
 	@Transactional
-	public ResponseEntity<TaskResponseDTO> updateTask(int id, TaskRequestDTO taskRequestDTO) {
+	public ResponseEntity<MeetingResponseDTO> updateMeeting(int id, MeetingRequestDTO meetingRequestDTO) {
 
 		Resources<CustomMessage> resource = null;
-		TaskResponseDTO taskResponseDTO = null;
+		MeetingResponseDTO meetingResponseDTO = null;
 
 		try {
 
 			List<CustomMessage> customMessageList = null;
 
-			customMessageList = ArrayListCustomMessage.setMessage("Patch task process", HttpStatus.OK);
+			customMessageList = ArrayListCustomMessage.setMessage("Patch meeting process", HttpStatus.OK);
 
 			// Check if request is null
-			if (taskRequestDTO == null) {
+			if (meetingRequestDTO == null) {
 				customMessageList = ArrayListCustomMessage.setMessage("Request body is null!", HttpStatus.BAD_REQUEST);
 				resource = new Resources<>(customMessageList);
-				resource.add(linkTo(TaskController.class).withSelfRel());
+				resource.add(linkTo(MeetingController.class).withSelfRel());
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 
-			// Find Task by ID for check if exists in DB
-			TaskEntity taskEntity = taskRepository.findById(id);
+			// Find Meeting by ID for check if exists in DB
+			MeetingEntity meetingEntity = meetingRepository.findByIdAndProjectId(id);
 
 			// If exists
-			if (taskEntity != null) {
+			if (meetingEntity != null) {
 
-				// The Task ID will always be the same, so we do not allow it to
+				// The Meeting ID will always be the same, so we do not allow it to
 				// be updated, for them we overwrite the field with the original value.
-				taskRequestDTO.setId(taskEntity.getId());
+				meetingRequestDTO.setId(meetingEntity.getId());
 
-				TaskEntity entityRequest = modelMapper.map(taskRequestDTO, TaskEntity.class);
-				taskRepository.save(entityRequest);
+				MeetingEntity entityRequest = modelMapper.map(meetingRequestDTO, MeetingEntity.class);
+				meetingRepository.save(entityRequest);
 
 			} else {
-				customMessageList = ArrayListCustomMessage.setMessage("Task id " + id + " Not Found!",
+				customMessageList = ArrayListCustomMessage.setMessage("Meeting id " + id + " Not Found!",
 						HttpStatus.BAD_REQUEST);
 				resource = new Resources<>(customMessageList);
-				resource.add(linkTo(TaskController.class).withSelfRel());
+				resource.add(linkTo(MeetingController.class).withSelfRel());
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 
 			resource = new Resources<>(customMessageList);
-			resource.add(linkTo(TaskController.class).slash(taskRequestDTO.getId()).withSelfRel());
+			resource.add(linkTo(MeetingController.class).slash(meetingRequestDTO.getId()).withSelfRel());
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
 
 		}
 
-		return new ResponseEntity<>(taskResponseDTO, HttpStatus.OK);
+		return new ResponseEntity<>(meetingResponseDTO, HttpStatus.OK);
 
 	}
 
@@ -221,19 +221,19 @@ public class TaskServiceImpl implements TaskService {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public ResponseEntity<TaskResponseDTO> deleteTask(int id) {
+	public ResponseEntity<MeetingResponseDTO> deleteMeeting(int id) {
 
-		TaskResponseDTO taskResponseDTO = null;
+		MeetingResponseDTO meetingResponseDTO = null;
 
 		try {
-			taskRepository.deleteById(id);
+			meetingRepository.deleteById(id);
 
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
 		}
 
-		return new ResponseEntity<>(taskResponseDTO, HttpStatus.OK);
+		return new ResponseEntity<>(meetingResponseDTO, HttpStatus.OK);
 
 	}
 }

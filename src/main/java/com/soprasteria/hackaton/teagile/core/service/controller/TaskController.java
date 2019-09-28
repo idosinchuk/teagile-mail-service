@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,32 +76,35 @@ public class TaskController {
 	/**
 	 * Update a task
 	 * 
-	 * @param id             task id
+	 * @param id             task Id
+	 * @param projectId      project Id
 	 * @param taskRequestDTO object to update
 	 * @return ResponseEntity with resource and status
 	 */
 	@PatchMapping(path = "/tasks/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Update the task.")
-	public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable("id") int id,
-			@RequestBody TaskRequestDTO taskRequestDTO) {
+	public ResponseEntity<TaskResponseDTO> updateTask(@RequestParam("id") int id,
+			@RequestParam("projectId") int projectId, @RequestBody TaskRequestDTO taskRequestDTO) {
 
 		logger.info("Process patch task");
-		return taskService.updateTask(id, taskRequestDTO);
+		return taskService.updateTask(id, projectId, taskRequestDTO);
 	}
 
 	/**
 	 * Retrieve task by Id.
 	 * 
-	 * @param id task Id
+	 * @param id        task Id
+	 * @param projectId project Id
 	 * @return ResponseEntity with status and taskResponseDTO
 	 */
 	@DeleteMapping(path = "/tasks/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Delete task by Id.")
-	public ResponseEntity<TaskResponseDTO> deleteTask(@PathVariable("id") int id) {
+	public ResponseEntity<TaskResponseDTO> deleteTask(@RequestParam("id") int id,
+			@RequestParam("projectId") int projectId) {
 
-		logger.info("Deleting task with id {} ", id);
-		return taskService.deleteTask(id);
+		logger.info("Deleting task with id and projectId{} ", id);
+		return taskService.deleteTask(id, projectId);
 	}
 }

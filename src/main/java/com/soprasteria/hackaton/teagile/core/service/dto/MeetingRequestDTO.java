@@ -52,4 +52,7 @@ public class MeetingRequestDTO {
 	@ApiModelProperty(value = "Meeting status", example = "Created")
 	private String status;
 
+	@ApiModelProperty(value = "Project Id", example = "1")
+	private int projectId;
+
 }

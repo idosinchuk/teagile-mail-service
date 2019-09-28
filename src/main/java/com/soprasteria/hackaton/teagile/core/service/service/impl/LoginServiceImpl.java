@@ -2,7 +2,6 @@ package com.soprasteria.hackaton.teagile.core.service.service.impl;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
-import java.util.Base64;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -45,10 +44,10 @@ public class LoginServiceImpl implements LoginService {
 		try {
 			List<CustomMessage> customMessageList = null;
 
-			byte[] passwordBytes = Base64.getDecoder().decode(password);
-			String decodedPassword = new String(passwordBytes);
+//			byte[] passwordBytes = Base64.getDecoder().decode(password);
+//			String decodedPassword = new String(passwordBytes);
 
-			UserEntity entityResponse = userRepository.findByEmailAndPassword(email, decodedPassword);
+			UserEntity entityResponse = userRepository.findByEmailAndPassword(email, password);
 
 			if (entityResponse == null) {
 				customMessageList = ArrayListCustomMessage
