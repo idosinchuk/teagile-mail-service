@@ -57,9 +57,7 @@ public class TaskServiceImpl implements TaskService {
 	 */
 	public ResponseEntity<List<TaskResponseDTO>> getAllTasksByProjectId(int projectId) {
 
-		List<TaskEntity> entityResponse = null;
-		// List<TaskEntity> entityResponse =
-		// taskRepository.findAllByProjectId(projectId);
+		List<TaskEntity> entityResponse = taskRepository.findByProjectId(projectId);
 
 		if (entityResponse == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);

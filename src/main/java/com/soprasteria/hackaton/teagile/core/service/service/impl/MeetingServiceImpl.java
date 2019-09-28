@@ -57,9 +57,8 @@ public class MeetingServiceImpl implements MeetingService {
 	 */
 	public ResponseEntity<List<MeetingResponseDTO>> getAllMeetingsByProjectId(int projectId) {
 
-		List<MeetingEntity> entityResponse = null;
-		// List<MeetingEntity> entityResponse =
-		// meetingRepository.findAllByProjectId(projectId);
+		// List<MeetingEntity> entityResponse = null;
+		List<MeetingEntity> entityResponse = meetingRepository.findByProjectId(projectId);
 
 		if (entityResponse == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
