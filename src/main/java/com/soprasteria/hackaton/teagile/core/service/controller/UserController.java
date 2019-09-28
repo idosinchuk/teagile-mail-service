@@ -83,7 +83,7 @@ public class UserController {
 	@GetMapping(path = "/users-email", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve user by email.")
-	public ResponseEntity<UserResponseDTO> getUserByEmail(@PathVariable("email") String email) {
+	public ResponseEntity<UserResponseDTO> getUserByEmail(@RequestParam("email") String email) {
 
 		logger.info("Fetching user with email {} ", email);
 		return userService.getUserByEmail(email);
