@@ -130,6 +130,16 @@ public class TaskServiceImpl implements TaskService {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 
+			// If priority is null, set default priority.
+			if (taskRequestDTO.getPriority() == null) {
+				taskRequestDTO.setPriority("5");
+			}
+
+			// If status is null, set default status.
+			if (taskRequestDTO.getStatus() == null) {
+				taskRequestDTO.setStatus("created");
+			}
+
 			// Convert taskRequestDTO to TaskEntity
 			TaskEntity entityRequest = modelMapper.map(taskRequestDTO, TaskEntity.class);
 

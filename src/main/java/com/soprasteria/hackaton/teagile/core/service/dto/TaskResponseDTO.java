@@ -37,12 +37,12 @@ public class TaskResponseDTO {
 	@ApiModelProperty(value = "End date", example = "28-09-2019 14:00:00")
 	private String endDate;
 
-	@ApiModelProperty(value = "Task label color", example = "blue")
-	private String labelColor;
+	@ApiModelProperty(value = "Priority", example = "1")
+	private String priority;
 
 	@ApiModelProperty(value = "Task status", example = "Created")
 	private String status;
-	
+
 	@ApiModelProperty(value = "Project Id", example = "1")
 	private String projectId;
 

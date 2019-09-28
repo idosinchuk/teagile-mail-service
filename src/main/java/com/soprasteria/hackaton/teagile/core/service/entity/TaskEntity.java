@@ -36,19 +36,19 @@ public class TaskEntity {
 	@Column(name = "title", nullable = false)
 	private String title;
 
-	@Column(name = "description", nullable = false)
+	@Column(name = "description")
 	private String description;
 
-	@Column(name = "start_date", nullable = false)
+	@Column(name = "start_date")
 	private String startDate;
 
-	@Column(name = "end_date", nullable = false)
+	@Column(name = "end_date")
 	private String endDate;
 
-	@Column(name = "label_color")
-	private String labelColor;
+	@Column(name = "priority", nullable = false)
+	private int priority;
 
-	@Column(name = "status")
+	@Column(name = "status", nullable = false)
 	private String status;
 
 	@ManyToOne
