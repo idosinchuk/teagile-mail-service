@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
+import com.soprasteria.hackaton.teagile.core.service.dto.ProjectResponseDTO;
 import com.soprasteria.hackaton.teagile.core.service.dto.UserRequestDTO;
 import com.soprasteria.hackaton.teagile.core.service.dto.UserResponseDTO;
 
@@ -47,6 +48,15 @@ public interface UserService {
 	 * @return {@link UserResponseDTO}
 	 */
 	ResponseEntity<UserResponseDTO> getUserByEmailAndPassword(String email, String password);
+
+	/**
+	 * Add user to project with email and projectId.
+	 * 
+	 * @param userRequestDTO object to save
+	 * @param projectId      project id
+	 * @return {@link ProjectResponseDTO}
+	 */
+	ResponseEntity<UserResponseDTO> addProjectToUser(UserRequestDTO userRequestDTO, int projectId);
 
 	/**
 	 * Add a user.

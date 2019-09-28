@@ -40,12 +40,12 @@ spec:
       - name: docker-registry-innersource
       containers:
       #Cambiame:
-      - image: registry-innersource.soprasteria.com/smartup/sopra-profile/teagile-core-service:develop
+      - image: registry-innersource.soprasteria.com/smartup/hackaton-asperger/teagile/teagile-eureka-service:master
         name: teagile-core-service
         imagePullPolicy: Always
         env:
         - name: SERVER_PORT
-          value: 8080
+          value: "8080"
 
 ---
 apiVersion: extensions/v1beta1

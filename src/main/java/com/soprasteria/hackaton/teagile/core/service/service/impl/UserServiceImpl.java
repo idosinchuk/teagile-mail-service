@@ -2,6 +2,7 @@ package com.soprasteria.hackaton.teagile.core.service.service.impl;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -22,8 +23,10 @@ import com.soprasteria.hackaton.teagile.core.service.common.CustomMessage;
 import com.soprasteria.hackaton.teagile.core.service.controller.UserController;
 import com.soprasteria.hackaton.teagile.core.service.dto.UserRequestDTO;
 import com.soprasteria.hackaton.teagile.core.service.dto.UserResponseDTO;
+import com.soprasteria.hackaton.teagile.core.service.entity.ProjectEntity;
 import com.soprasteria.hackaton.teagile.core.service.entity.UserEntity;
 import com.soprasteria.hackaton.teagile.core.service.mail.MailClient;
+import com.soprasteria.hackaton.teagile.core.service.repository.ProjectRepository;
 import com.soprasteria.hackaton.teagile.core.service.repository.UserRepository;
 import com.soprasteria.hackaton.teagile.core.service.service.UserService;
 
@@ -38,6 +41,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private ProjectRepository projectRepository;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -157,6 +163,75 @@ public class UserServiceImpl implements UserService {
 			}
 
 			userResponseDTO = modelMapper.map(entityResponse, UserResponseDTO.class);
+
+		} catch (Exception e) {
+			logger.error("An error occurred! {}", e.getMessage());
+			return CustomErrorType.returnResponsEntityError(e.getMessage());
+		}
+
+		return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<UserResponseDTO> addProjectToUser(UserRequestDTO userRequestDTO, int projectId) {
+
+		UserResponseDTO userResponseDTO = null;
+		Resources<CustomMessage> resource = null;
+
+		try {
+			UserEntity userEntity;
+			ProjectEntity projectEntityResponse;
+
+			List<CustomMessage> customMessageList = null;
+
+			// Check if project exists in db
+			projectEntityResponse = projectRepository.findById(projectId);
+
+			// If project exists in db
+			if (projectEntityResponse == null) {
+				customMessageList = ArrayListCustomMessage.setMessage(
+						"The project does not exists. Please try to add to other project.", HttpStatus.BAD_REQUEST);
+				resource = new Resources<>(customMessageList);
+				resource.add(linkTo(UserController.class).withSelfRel());
+
+				return new ResponseEntity<>(userResponseDTO, HttpStatus.BAD_REQUEST);
+			}
+
+			// Convert userRequestDTO to userEntityRequest
+			UserEntity userEntityRequest = modelMapper.map(userRequestDTO, UserEntity.class);
+
+			// Check if user exists in db
+			userEntity = userRepository.findByEmail(userRequestDTO.getEmail());
+
+			// If user exists, add project to user
+			if (userEntity != null) {
+				List<ProjectEntity> projects = new ArrayList<>();
+				projects.add(projectEntityResponse);
+				userEntityRequest.setProjects(projects);
+				userRepository.save(userEntityRequest);
+
+				// TODO: Mandar mail con: Se te ha añadido al proyecto.
+
+			}
+
+			// If user not exists, create user.
+			else {
+				userRepository.save(userEntityRequest);
+
+				String type = "RegistrationWelcome";
+
+				// Send email
+				mailClient.prepareAndSend(userRequestDTO.getEmail(), type);
+
+				customMessageList = ArrayListCustomMessage.setMessage("Created new user and added to the project",
+						HttpStatus.CREATED);
+				resource = new Resources<>(customMessageList);
+				resource.add(linkTo(UserController.class).withSelfRel());
+			}
 
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());

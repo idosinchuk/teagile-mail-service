@@ -21,9 +21,9 @@ import com.soprasteria.hackaton.teagile.core.service.common.CustomMessage;
 import com.soprasteria.hackaton.teagile.core.service.controller.ProjectController;
 import com.soprasteria.hackaton.teagile.core.service.dto.ProjectRequestDTO;
 import com.soprasteria.hackaton.teagile.core.service.dto.ProjectResponseDTO;
-import com.soprasteria.hackaton.teagile.core.service.dto.UserResponseDTO;
 import com.soprasteria.hackaton.teagile.core.service.entity.ProjectEntity;
 import com.soprasteria.hackaton.teagile.core.service.repository.ProjectRepository;
+import com.soprasteria.hackaton.teagile.core.service.repository.UserRepository;
 import com.soprasteria.hackaton.teagile.core.service.service.ProjectService;
 
 /**
@@ -37,6 +37,9 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Autowired
 	private ProjectRepository projectRepository;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -198,7 +201,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 		try {
 			projectRepository.deleteById(id);
-	
+
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
