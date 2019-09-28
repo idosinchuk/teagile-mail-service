@@ -2,6 +2,7 @@ package com.soprasteria.hackaton.teagile.core.service.service.impl;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -119,7 +120,7 @@ public class ProjectServiceImpl implements ProjectService {
 				return new ResponseEntity<>(resource, HttpStatus.BAD_REQUEST);
 			}
 
-			ProjectEntity entityRequest = modelMapper.map(projectRequestDTO, ProjectEntity.class);
+			ProjectEntity projectEntityRequest = modelMapper.map(projectRequestDTO, ProjectEntity.class);
 
 			ProjectEntity projectEntity = projectRepository.findByName(projectRequestDTO.getName());
 
@@ -134,7 +135,15 @@ public class ProjectServiceImpl implements ProjectService {
 				return new ResponseEntity<>(resource, HttpStatus.BAD_REQUEST);
 			}
 
-			ProjectEntity projectEntityResponse = projectRepository.save(entityRequest);
+			ProjectEntity projectEntityResponse = projectRepository.save(projectEntityRequest);
+
+			// If project was created successfully, add project to user
+			if (projectEntityResponse != null) {
+				List<ProjectEntity> projects = new ArrayList<>();
+				projects.add(projectEntityResponse);
+				userEntity.setProjects(projects);
+				userRepository.save(userEntity);
+			}
 
 			customMessageList = ArrayListCustomMessage.setMessage("Created new project", HttpStatus.CREATED);
 
