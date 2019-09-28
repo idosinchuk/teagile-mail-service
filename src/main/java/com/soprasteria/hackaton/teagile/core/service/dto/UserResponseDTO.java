@@ -36,9 +36,6 @@ public class UserResponseDTO {
 	@ApiModelProperty(value = "Email", example = "jhon")
 	private String email;
 
-	@ApiModelProperty(value = "Login password", example = "admin123")
-	private String password;
-
 	@ApiModelProperty(value = "Projects", example = "")
 	private List<ProjectResponseDTO> projects;
 

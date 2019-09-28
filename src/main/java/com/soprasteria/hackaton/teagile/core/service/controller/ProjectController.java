@@ -84,7 +84,7 @@ public class ProjectController {
 	@ResponseBody
 	@ApiOperation(value = "Add a project.")
 	public ResponseEntity<?> addProject(@Valid @RequestBody ProjectRequestDTO projectRequestDTO,
-			@RequestParam("id") int userId) {
+			@RequestParam("userId") int userId) {
 
 		logger.info("Process add project");
 
