@@ -177,11 +177,11 @@ public class UserServiceImpl implements UserService {
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
-	public ResponseEntity<UserResponseDTO> addUserToProject(UserRequestDTO userRequestDTO, int projectId) {
+	public ResponseEntity<?> addUserToProject(UserRequestDTO userRequestDTO, int projectId) {
 
 		UserResponseDTO userResponseDTO = null;
 		Resources<CustomMessage> resource = null;
+		UserEntity userEntityResponse = null;
 
 		try {
 			UserEntity userEntity;
@@ -202,18 +202,30 @@ public class UserServiceImpl implements UserService {
 				return new ResponseEntity<>(userResponseDTO, HttpStatus.BAD_REQUEST);
 			}
 
-			// Convert userRequestDTO to userEntityRequest
-			UserEntity userEntityRequest = modelMapper.map(userRequestDTO, UserEntity.class);
-
 			// Check if user exists in db
 			userEntity = userRepository.findByEmail(userRequestDTO.getEmail());
 
 			// If user exists, add project to user
 			if (userEntity != null) {
 				List<ProjectEntity> projects = new ArrayList<>();
+//				if (userEntity.getProjects().isEmpty()) {
+//					projects.add(projectEntityResponse);
+//					userEntity.setProjects(projects);
+//				} else {
+//					projects = userEntity.getProjects();
+//					projects.add(projectEntityResponse);
+//					userEntity.setProjects(projects);
+//				}
+				projects = userEntity.getProjects();
 				projects.add(projectEntityResponse);
-				userEntityRequest.setProjects(projects);
-				userRepository.save(userEntityRequest);
+				userEntity.setProjects(projects);
+
+				userRepository.save(userEntity);
+
+				customMessageList = ArrayListCustomMessage.setMessage("Added project to user", HttpStatus.CREATED);
+
+				resource = new Resources<>(customMessageList);
+				resource.add(linkTo(UserController.class).withSelfRel());
 
 				// TODO: Mandar mail con: Se te ha añadido al proyecto.
 
@@ -221,13 +233,19 @@ public class UserServiceImpl implements UserService {
 
 			// If user not exists, create user.
 			else {
+				// Convert userRequestDTO to userEntityRequest
+				UserEntity userEntityRequest = modelMapper.map(userRequestDTO, UserEntity.class);
+
 				List<ProjectEntity> projects = new ArrayList<>();
 				projects.add(projectEntityResponse);
 				// set project to new user
 				userEntityRequest.setProjects(projects);
 				// Set default password
 				userEntityRequest.setPassword(RandomStringUtils.randomAlphabetic(10));
-				userRepository.save(userEntityRequest);
+				userEntityResponse = userRepository.save(userEntityRequest);
+
+				// Convert userRequestDTO to userEntityRequest
+				userResponseDTO = modelMapper.map(userEntityResponse, UserResponseDTO.class);
 
 				String type = "RegistrationWelcome";
 
@@ -322,9 +340,10 @@ public class UserServiceImpl implements UserService {
 			// If exists
 			if (userEntity != null) {
 
-				// The user ID will always be the same, so we do not allow it to
+				// The user ID and email will always be the same, so we do not allow it to
 				// be updated, for them we overwrite the field with the original value.
 				userRequestDTO.setId(userEntity.getId());
+				userRequestDTO.setEmail(userEntity.getEmail());
 
 				UserEntity entityRequest = modelMapper.map(userRequestDTO, UserEntity.class);
 				userRepository.save(entityRequest);

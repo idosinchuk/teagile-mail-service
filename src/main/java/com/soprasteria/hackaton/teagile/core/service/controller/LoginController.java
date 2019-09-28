@@ -42,7 +42,7 @@ public class LoginController {
 	 */
 	@GetMapping(path = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@ApiOperation(value = "Retrieve user by login credentials.")
+	@ApiOperation(value = " Check login by email and password")
 	public ResponseEntity<?> getLogin(@RequestParam("email") String email, @RequestParam("password") String password) {
 
 		logger.info("Fetching user by email and password with email {} ", email);

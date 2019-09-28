@@ -117,7 +117,7 @@ public class UserController {
 	@PostMapping(path = "/assign-project", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Add project to user")
-	public ResponseEntity<UserResponseDTO> addUserToProject(@RequestBody UserRequestDTO userRequestDTO,
+	public ResponseEntity<?> addUserToProject(@RequestBody UserRequestDTO userRequestDTO,
 			@RequestParam("projectId") int projectId) {
 
 		logger.info("Add project to user with userRequestDTO and projectId {}", userRequestDTO, projectId);

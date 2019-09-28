@@ -56,7 +56,7 @@ public interface UserService {
 	 * @param projectId      project id
 	 * @return {@link ProjectResponseDTO}
 	 */
-	ResponseEntity<UserResponseDTO> addUserToProject(UserRequestDTO userRequestDTO, int projectId);
+	ResponseEntity<?> addUserToProject(UserRequestDTO userRequestDTO, int projectId);
 
 	/**
 	 * Add a user.
