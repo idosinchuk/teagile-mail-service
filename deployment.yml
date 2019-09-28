@@ -40,7 +40,7 @@ spec:
       - name: docker-registry-innersource
       containers:
       #Cambiame:
-      - image: registry-innersource.soprasteria.com/smartup/hackaton-asperger/teagile/teagile-eureka-service:master
+      - image: registry-innersource.soprasteria.com/smartup/hackaton-asperger/teagile/teagile-core-service:master
         name: teagile-core-service
         imagePullPolicy: Always
         env:

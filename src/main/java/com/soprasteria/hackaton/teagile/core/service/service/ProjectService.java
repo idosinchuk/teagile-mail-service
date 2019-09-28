@@ -36,10 +36,11 @@ public interface ProjectService {
 	 * Add a project.
 	 * 
 	 * @param projectRequestDTO object to save
+	 * @param id                user id
 	 * 
 	 * @return ResponseEntity
 	 */
-	ResponseEntity<?> addProject(ProjectRequestDTO projectRequestDTO);
+	ResponseEntity<?> addProject(ProjectRequestDTO projectRequestDTO, int userId);
 
 	/**
 	 * Update the project.

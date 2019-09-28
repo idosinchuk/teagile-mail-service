@@ -22,6 +22,7 @@ import com.soprasteria.hackaton.teagile.core.service.controller.ProjectControlle
 import com.soprasteria.hackaton.teagile.core.service.dto.ProjectRequestDTO;
 import com.soprasteria.hackaton.teagile.core.service.dto.ProjectResponseDTO;
 import com.soprasteria.hackaton.teagile.core.service.entity.ProjectEntity;
+import com.soprasteria.hackaton.teagile.core.service.entity.UserEntity;
 import com.soprasteria.hackaton.teagile.core.service.repository.ProjectRepository;
 import com.soprasteria.hackaton.teagile.core.service.repository.UserRepository;
 import com.soprasteria.hackaton.teagile.core.service.service.ProjectService;
@@ -99,12 +100,24 @@ public class ProjectServiceImpl implements ProjectService {
 	 * {@inheritDoc}
 	 */
 	@Transactional
-	public ResponseEntity<?> addProject(ProjectRequestDTO projectRequestDTO) {
+	public ResponseEntity<?> addProject(ProjectRequestDTO projectRequestDTO, int userId) {
 
 		Resources<CustomMessage> resource = null;
 
 		try {
 			List<CustomMessage> customMessageList = null;
+
+			UserEntity userEntity = userRepository.findById(userId);
+
+			// Check if userId exists in the database
+			if (userEntity == null) {
+				customMessageList = ArrayListCustomMessage.setMessage(
+						"The requested userId does not exists. Please select correct user.", HttpStatus.BAD_REQUEST);
+				resource = new Resources<>(customMessageList);
+				resource.add(linkTo(ProjectController.class).withSelfRel());
+
+				return new ResponseEntity<>(resource, HttpStatus.BAD_REQUEST);
+			}
 
 			ProjectEntity entityRequest = modelMapper.map(projectRequestDTO, ProjectEntity.class);
 
@@ -121,7 +134,7 @@ public class ProjectServiceImpl implements ProjectService {
 				return new ResponseEntity<>(resource, HttpStatus.BAD_REQUEST);
 			}
 
-			projectRepository.save(entityRequest);
+			ProjectEntity projectEntityResponse = projectRepository.save(entityRequest);
 
 			customMessageList = ArrayListCustomMessage.setMessage("Created new project", HttpStatus.CREATED);
 

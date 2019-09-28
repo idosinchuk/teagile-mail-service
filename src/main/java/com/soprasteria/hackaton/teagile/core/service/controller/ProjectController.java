@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -82,11 +83,12 @@ public class ProjectController {
 	@PostMapping(path = "/projects", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Add a project.")
-	public ResponseEntity<?> addProject(@Valid @RequestBody ProjectRequestDTO projectRequestDTO) {
+	public ResponseEntity<?> addProject(@Valid @RequestBody ProjectRequestDTO projectRequestDTO,
+			@RequestParam("id") int userId) {
 
 		logger.info("Process add project");
 
-		return projectService.addProject(projectRequestDTO);
+		return projectService.addProject(projectRequestDTO, userId);
 
 	}
 
