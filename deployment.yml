@@ -46,7 +46,7 @@ spec:
         env:
         - name: SERVER_PORT
           value: "8080"
-        - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        - name: EUREKA_CLIENT_SERVICE-URL_DEFAULT-ZONE
           value : "teagile-eureka-service.apps.12b5129e45db47179d12.westeurope.aksapp.io"
 
 ---
