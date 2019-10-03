@@ -1,7 +1,5 @@
 package com.soprasteria.hackaton.teagile.core.service.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -21,19 +19,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.soprasteria.hackaton.teagile.core.service.dto.ProjectRequestDTO;
-import com.soprasteria.hackaton.teagile.core.service.dto.ProjectResponseDTO;
 import com.soprasteria.hackaton.teagile.core.service.service.ProjectService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-/**
- * Controller for Project
- * 
- * @author Igor Dosinchuk
- * @author Luis Rapestre
- * 
- */
 @RestController
 @Api(value = "API Rest for Project.")
 @RequestMapping(value = "/api/v1")
@@ -44,42 +34,24 @@ public class ProjectController {
 	@Autowired
 	ProjectService projectService;
 
-	/**
-	 * Retrieve list of all projects filtered by userId
-	 * 
-	 * @param pageable paging fields
-	 * @return ResponseEntity with list of projects filtered by userId
-	 */
 	@GetMapping(path = "/projects", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve list of all projects filtered by userId")
-	public ResponseEntity<List<ProjectResponseDTO>> getAllProjectsByUserId(@RequestParam("userId") int userId) {
+	public ResponseEntity<?> getAllProjectsByUserId(@RequestParam("userId") int userId) {
 
 		logger.info("Fetching all projects by UserId");
 		return projectService.getAllProjectsByUserId(userId);
 	}
 
-	/**
-	 * Retrieve project by Id.
-	 * 
-	 * @param id project id
-	 * @return ResponseEntity with status and projectResponseDTO
-	 */
 	@GetMapping(path = "/projects/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve project by id.")
-	public ResponseEntity<ProjectResponseDTO> getProject(@PathVariable("id") int id) {
+	public ResponseEntity<?> getProject(@PathVariable("id") int id) {
 
 		logger.info("Fetching project with id {}", id);
 		return projectService.getProject(id);
 	}
 
-	/**
-	 * Add a project.
-	 * 
-	 * @param projectRequestDTO object to save
-	 * @return ResponseEntity with status and projectResponseDTO
-	 */
 	@PostMapping(path = "/projects", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Add a project.")
@@ -92,13 +64,6 @@ public class ProjectController {
 
 	}
 
-	/**
-	 * Update a project
-	 * 
-	 * @param id                project id
-	 * @param projectRequestDTO object to update
-	 * @return ResponseEntity with resource and status
-	 */
 	@PatchMapping(path = "/projects/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Update the project.")
@@ -111,16 +76,10 @@ public class ProjectController {
 
 	}
 
-	/**
-	 * Retrieve user by Id.
-	 * 
-	 * @param id user Id
-	 * @return ResponseEntity with status and userResponseDTO
-	 */
 	@DeleteMapping(path = "/projects/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Delete project by Id.")
-	public ResponseEntity<ProjectResponseDTO> deleteUser(@PathVariable("id") int id) {
+	public ResponseEntity<?> deleteUser(@PathVariable("id") int id) {
 
 		logger.info("Deleting user with id {} ", id);
 		return projectService.deleteProject(id);

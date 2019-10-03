@@ -16,13 +16,6 @@ import com.soprasteria.hackaton.teagile.core.service.service.LoginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-/**
- * Controller for Login
- * 
- * @author Igor Dosinchuk
- * @author Luis Rapestre
- * 
- */
 @RestController
 @Api(value = "API Rest for Login.")
 @RequestMapping(value = "/api/v1")
@@ -33,13 +26,6 @@ public class LoginController {
 	@Autowired
 	LoginService loginService;
 
-	/**
-	 * Check login by email and password.
-	 * 
-	 * @param email    user email
-	 * @param password user password
-	 * @return ResponseEntity with status and userResponseDTO
-	 */
 	@GetMapping(path = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = " Check login by email and password")

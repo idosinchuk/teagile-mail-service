@@ -1,7 +1,5 @@
 package com.soprasteria.hackaton.teagile.core.service.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -12,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,19 +19,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.soprasteria.hackaton.teagile.core.service.dto.TaskRequestDTO;
-import com.soprasteria.hackaton.teagile.core.service.dto.TaskResponseDTO;
 import com.soprasteria.hackaton.teagile.core.service.service.TaskService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-/**
- * Controller for task
- * 
- * @author Igor Dosinchuk
- * @author Luis Rapestre
- * 
- */
 @RestController
 @Api(value = "API Rest for Task.")
 @RequestMapping(value = "/api/v1")
@@ -43,68 +34,41 @@ public class TaskController {
 	@Autowired
 	TaskService taskService;
 
-	/**
-	 * Retrieve list of all tasks.
-	 * 
-	 * @param pageable paging fields
-	 * @return ResponseEntity with paged list of all tasks, headers and status
-	 */
-	@GetMapping(path = "/tasks", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/projects/{projectId}/tasks/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve list of all tasks.")
-	public ResponseEntity<List<TaskResponseDTO>> getAllTasksByProjectId(@RequestParam("projectId") int projectId) {
+	public ResponseEntity<?> getAllTasksByProjectId(@PathVariable("projectId") int projectId) {
 
 		logger.info("Fetching all tasks by projectId");
 		return taskService.getAllTasksByProjectId(projectId);
 	}
 
-	/**
-	 * Add a task.
-	 * 
-	 * @param taskRequestDTO object to save
-	 * @return ResponseEntity with status and taskResponseDTO
-	 */
-	@PostMapping(path = "/tasks", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/projects/{projectId}/tasks", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Add a task.")
-	public ResponseEntity<TaskResponseDTO> addTask(@Valid @RequestBody TaskRequestDTO taskRequestDTO) {
+	public ResponseEntity<?> addTask(@PathVariable("projectId") int projectId, @Valid @RequestBody TaskRequestDTO taskRequestDTO) {
 
 		logger.info("Process add task");
-		return taskService.addTask(taskRequestDTO);
+		return taskService.addTask(projectId, taskRequestDTO);
 	}
 
-	/**
-	 * Update a task
-	 * 
-	 * @param id             task Id
-	 * @param projectId      project Id
-	 * @param taskRequestDTO object to update
-	 * @return ResponseEntity with resource and status
-	 */
-	@PatchMapping(path = "/tasks/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping(path = "/projects/{projectId}/tasks/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Update the task.")
-	public ResponseEntity<TaskResponseDTO> updateTask(@RequestParam("id") int id,
+	public ResponseEntity<?> updateTask(@RequestParam("taskId") int taskId,
 			@RequestParam("projectId") int projectId, @RequestBody TaskRequestDTO taskRequestDTO) {
 
 		logger.info("Process patch task");
-		return taskService.updateTask(id, projectId, taskRequestDTO);
+		return taskService.updateTask(taskId, projectId, taskRequestDTO);
 	}
 
-	/**
-	 * Retrieve task by Id.
-	 * 
-	 * @param id        task Id
-	 * @param projectId project Id
-	 * @return ResponseEntity with status and taskResponseDTO
-	 */
-	@DeleteMapping(path = "/tasks/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(path = "/projects/{projectId}/tasks/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@ApiOperation(value = "Delete task by Id.")
-	public ResponseEntity<TaskResponseDTO> deleteTask(@RequestParam("id") int id,
+	@ApiOperation(value = "Delete the task")
+	public ResponseEntity<?> deleteTask(@RequestParam("taskId") int taskId,
 			@RequestParam("projectId") int projectId) {
 
-		logger.info("Deleting task with id and projectId{} ", id);
-		return taskService.deleteTask(id, projectId);
+		logger.info("Deleting task with taskId and projectId{} ", taskId);
+		return taskService.deleteTask(taskId, projectId);
 	}
 }

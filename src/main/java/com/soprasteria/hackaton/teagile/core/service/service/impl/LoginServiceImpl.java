@@ -2,6 +2,7 @@ package com.soprasteria.hackaton.teagile.core.service.service.impl;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
+import java.util.Base64;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,12 +21,6 @@ import com.soprasteria.hackaton.teagile.core.service.entity.UserEntity;
 import com.soprasteria.hackaton.teagile.core.service.repository.UserRepository;
 import com.soprasteria.hackaton.teagile.core.service.service.LoginService;
 
-/**
- * Implementation for login service
- * 
- * @author Igor Dosinchuk
- *
- */
 @Service("LoginService")
 public class LoginServiceImpl implements LoginService {
 
@@ -34,9 +29,6 @@ public class LoginServiceImpl implements LoginService {
 
 	public static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public ResponseEntity<?> getLogin(String email, String password) {
 
 		Resources<CustomMessage> resource = null;
@@ -44,10 +36,10 @@ public class LoginServiceImpl implements LoginService {
 		try {
 			List<CustomMessage> customMessageList = null;
 
-//			byte[] passwordBytes = Base64.getDecoder().decode(password);
-//			String decodedPassword = new String(passwordBytes);
+			byte[] passwordBytes = Base64.getDecoder().decode(password);
+			String decodedPassword = new String(passwordBytes);
 
-			UserEntity entityResponse = userRepository.findByEmailAndPassword(email, password);
+			UserEntity entityResponse = userRepository.findByEmailAndPassword(email, decodedPassword);
 
 			if (entityResponse == null) {
 				customMessageList = ArrayListCustomMessage

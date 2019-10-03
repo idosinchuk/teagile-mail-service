@@ -1,7 +1,5 @@
 package com.soprasteria.hackaton.teagile.core.service.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -21,19 +19,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.soprasteria.hackaton.teagile.core.service.dto.UserRequestDTO;
-import com.soprasteria.hackaton.teagile.core.service.dto.UserResponseDTO;
 import com.soprasteria.hackaton.teagile.core.service.service.UserService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-/**
- * Controller for user
- * 
- * @author Igor Dosinchuk
- * @author Luis Rapestre
- * 
- */
 @RestController
 @Api(value = "API Rest for User.")
 @RequestMapping(value = "/api/v1")
@@ -44,62 +34,34 @@ public class UserController {
 	@Autowired
 	UserService userService;
 
-	/**
-	 * Retrieve list of all users.
-	 * 
-	 * @param pageable paging fields
-	 * @return ResponseEntity with paged list of all users, headers and status
-	 */
 	@GetMapping(path = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve list of all users.")
-	public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+	public ResponseEntity<?> getAllUsers() {
 
 		logger.info("Fetching all users");
 		return userService.getAllUsers();
 	}
 
-	/**
-	 * Retrieve user by Id.
-	 * 
-	 * @param id user Id
-	 * @return ResponseEntity with status and userResponseDTO
-	 */
-	@GetMapping(path = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	@ApiOperation(value = "Retrieve user by Id.")
-	public ResponseEntity<UserResponseDTO> getUser(@PathVariable("id") int id) {
+	@GetMapping(path = "/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Retrieve user by User ID.")
+	public ResponseEntity<?> getUser(@PathVariable("userId") int userId) {
 
-		logger.info("Fetching user with id {} ", id);
-		return userService.getUser(id);
+		logger.info("Fetching user with userId {} ", userId);
+		return userService.getUser(userId);
 	}
 
-	/**
-	 * Retrieve user by user email.
-	 * 
-	 * @param email user email
-	 * @return ResponseEntity with status and userResponseDTO
-	 */
 	@GetMapping(path = "/users-email", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
 	@ApiOperation(value = "Retrieve user by email.")
-	public ResponseEntity<UserResponseDTO> getUserByEmail(@RequestParam("email") String email) {
+	public ResponseEntity<?> getUserByEmail(@RequestParam("email") String email) {
 
 		logger.info("Fetching user with email {} ", email);
 		return userService.getUserByEmail(email);
 	}
 
-	/**
-	 * Retrieve user by email and password.
-	 * 
-	 * @param email    user email
-	 * @param password user password
-	 * @return ResponseEntity with status and userResponseDTO
-	 */
 	@GetMapping(path = "/users-login", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
 	@ApiOperation(value = "Retrieve user by login credentials.")
-	public ResponseEntity<UserResponseDTO> getUserByLogin(@RequestParam("email") String email,
+	public ResponseEntity<?> getUserByLogin(@RequestParam("email") String email,
 			@RequestParam("password") String password) {
 
 		logger.info("Fetching user by email and password with email {} ", email);
@@ -107,31 +69,15 @@ public class UserController {
 
 	}
 
-	/**
-	 * Add user to project by userRequestDTO and projectId.
-	 * 
-	 * @param userRequestDTO request object
-	 * @param projectId      project id
-	 * @return ResponseEntity with status and projectResponseDTO
-	 */
-	@PostMapping(path = "/assign-project", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
+	@PostMapping(path = "projects/{projectId}/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Add project to user")
-	public ResponseEntity<?> addUserToProject(@RequestBody UserRequestDTO userRequestDTO,
-			@RequestParam("projectId") int projectId) {
+	public ResponseEntity<?> addUserToProject(@PathVariable("projectId") int projectId, @PathVariable("userId") int userId) {
 
-		logger.info("Add project to user with userRequestDTO and projectId {}", userRequestDTO, projectId);
-		return userService.addUserToProject(userRequestDTO, projectId);
+		logger.info("Add project to user with projectId and userId {}", projectId, userId);
+		return userService.addUserToProject(projectId, userId);
 	}
 
-	/**
-	 * Add a user.
-	 * 
-	 * @param userRequestDTO object to save
-	 * @return ResponseEntity with status and userResponseDTO
-	 */
 	@PostMapping(path = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
 	@ApiOperation(value = "Add a user.")
 	public ResponseEntity<?> addUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
 
@@ -139,34 +85,19 @@ public class UserController {
 		return userService.addUser(userRequestDTO);
 	}
 
-	/**
-	 * Update a user
-	 * 
-	 * @param id             user id
-	 * @param userRequestDTO object to update
-	 * @return ResponseEntity with resource and status
-	 */
-	@PatchMapping(path = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
+	@PatchMapping(path = "/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Update the user.")
-	public ResponseEntity<?> updateUser(@PathVariable("id") int id, @RequestBody UserRequestDTO userRequestDTO) {
+	public ResponseEntity<?> updateUser(@PathVariable("userId") int userId, @RequestBody UserRequestDTO userRequestDTO) {
 
 		logger.info("Process patch user");
-		return userService.updateUser(id, userRequestDTO);
+		return userService.updateUser(userId, userRequestDTO);
 	}
 
-	/**
-	 * Retrieve user by Id.
-	 * 
-	 * @param id user Id
-	 * @return ResponseEntity with status and userResponseDTO
-	 */
-	@DeleteMapping(path = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	@ApiOperation(value = "Delete user by Id.")
-	public ResponseEntity<UserResponseDTO> deleteUser(@PathVariable("id") int id) {
+	@DeleteMapping(path = "/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Delete user by User ID.")
+	public ResponseEntity<?> deleteUser(@PathVariable("userId") int userId) {
 
-		logger.info("Deleting user with id {} ", id);
-		return userService.deleteUser(id);
+		logger.info("Deleting user with userId {} ", userId);
+		return userService.deleteUser(userId);
 	}
 }

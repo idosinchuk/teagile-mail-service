@@ -3,9 +3,9 @@ package com.soprasteria.hackaton.teagile.core.service.service.impl;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.soprasteria.hackaton.teagile.core.service.common.ArrayListCustomMessage;
 import com.soprasteria.hackaton.teagile.core.service.common.CustomErrorType;
 import com.soprasteria.hackaton.teagile.core.service.common.CustomMessage;
+import com.soprasteria.hackaton.teagile.core.service.controller.MeetingController;
 import com.soprasteria.hackaton.teagile.core.service.controller.UserController;
 import com.soprasteria.hackaton.teagile.core.service.dto.UserRequestDTO;
 import com.soprasteria.hackaton.teagile.core.service.dto.UserResponseDTO;
@@ -53,30 +54,37 @@ public class UserServiceImpl implements UserService {
 
 	public static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+	public ResponseEntity<?> getAllUsers() {
 
-		List<UserEntity> entityResponse = userRepository.findAll();
+		Resources<CustomMessage> resource = null;
+		List<CustomMessage> customMessageList = null;
+		List<UserResponseDTO> users = new ArrayList<>();
+		
+		try {
+			List<UserEntity> entityResponse = userRepository.findAll();
 
-		if (entityResponse == null) {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			if (!entityResponse.isEmpty()) {
+				customMessageList = ArrayListCustomMessage.setMessage("There are not meetings!",
+						HttpStatus.NO_CONTENT);
+				resource = new Resources<>(customMessageList);
+				resource.add(linkTo(MeetingController.class).withSelfRel());
+				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
+			}
+
+			// Convert Entity response to DTO
+			users = modelMapper.map(entityResponse, new TypeToken<List<UserResponseDTO>>() {
+			}.getType());
+
+		} catch (Exception e) {
+			logger.error("An error occurred! {}", e.getMessage());
+			return CustomErrorType.returnResponsEntityError(e.getMessage());
 		}
-
-		// Convert Entity response to DTO
-		List<UserResponseDTO> users = modelMapper.map(entityResponse, new TypeToken<List<UserResponseDTO>>() {
-		}.getType());
 
 		return new ResponseEntity<>(users, HttpStatus.OK);
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	public ResponseEntity<UserResponseDTO> getUser(int id) {
+	public ResponseEntity<?> getUser(int id) {
 
 		UserResponseDTO userResponseDTO = null;
 		Resources<CustomMessage> resource = null;
@@ -92,7 +100,7 @@ public class UserServiceImpl implements UserService {
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(UserController.class).withSelfRel());
 
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
 			}
 
 			userResponseDTO = modelMapper.map(entityResponse, UserResponseDTO.class);
@@ -106,11 +114,7 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	public ResponseEntity<UserResponseDTO> getUserByEmail(String email) {
+	public ResponseEntity<?> getUserByEmail(String email) {
 
 		UserResponseDTO userResponseDTO = null;
 		Resources<CustomMessage> resource = null;
@@ -140,11 +144,7 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	public ResponseEntity<UserResponseDTO> getUserByEmailAndPassword(String email, String password) {
+	public ResponseEntity<?> getUserByEmailAndPassword(String email, String password) {
 
 		UserResponseDTO userResponseDTO = null;
 		Resources<CustomMessage> resource = null;
@@ -152,10 +152,10 @@ public class UserServiceImpl implements UserService {
 		try {
 			List<CustomMessage> customMessageList = null;
 
-//			byte[] passwordBytes = Base64.getDecoder().decode(password);
-//			String decodedPassword = new String(passwordBytes);
+			byte[] passwordBytes = Base64.getDecoder().decode(password);
+			String decodedPassword = new String(passwordBytes);
 
-			UserEntity entityResponse = userRepository.findByEmailAndPassword(email, password);
+			UserEntity entityResponse = userRepository.findByEmailAndPassword(email, decodedPassword);
 
 			if (entityResponse == null) {
 				customMessageList = ArrayListCustomMessage
@@ -177,14 +177,10 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public ResponseEntity<?> addUserToProject(UserRequestDTO userRequestDTO, int projectId) {
+	public ResponseEntity<?> addUserToProject(int projectId, int userId) {
 
 		UserResponseDTO userResponseDTO = null;
 		Resources<CustomMessage> resource = null;
-		UserEntity userEntityResponse = null;
 
 		try {
 			UserEntity userEntity;
@@ -195,22 +191,22 @@ public class UserServiceImpl implements UserService {
 			// Check if project exists in db
 			projectEntityResponse = projectRepository.findById(projectId);
 
-			// If project exists in db
+			// If project does not exists in db
 			if (projectEntityResponse == null) {
 				customMessageList = ArrayListCustomMessage.setMessage(
-						"The project does not exists. Please try to add to other project.", HttpStatus.BAD_REQUEST);
+						"The project does not exists. Please try to add to other project.", HttpStatus.NO_CONTENT);
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(UserController.class).withSelfRel());
 
-				return new ResponseEntity<>(userResponseDTO, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
 			}
 
 			// Check if user exists in db
-			userEntity = userRepository.findByEmail(userRequestDTO.getEmail());
+			userEntity = userRepository.findById(userId);
 
 			// If user exists, add project to user
 			if (userEntity != null) {
-				List<ProjectEntity> projects = new ArrayList<>();
+				List<ProjectEntity> projects;
 				projects = userEntity.getProjects();
 				projects.add(projectEntityResponse);
 				userEntity.setProjects(projects);
@@ -222,35 +218,16 @@ public class UserServiceImpl implements UserService {
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(UserController.class).withSelfRel());
 
+				String type = "User added to project";
+
 				// TODO: Mandar mail con: Se te ha añadido al proyecto.
+				mailClient.prepareAndSend(userEntity.getEmail(), type);
 
 			}
 
-			// If user not exists, create user.
 			else {
-				// Convert userRequestDTO to userEntityRequest
-				UserEntity userEntityRequest = modelMapper.map(userRequestDTO, UserEntity.class);
+				return new ResponseEntity<>(userResponseDTO, HttpStatus.NO_CONTENT);
 
-				List<ProjectEntity> projects = new ArrayList<>();
-				projects.add(projectEntityResponse);
-				// set project to new user
-				userEntityRequest.setProjects(projects);
-				// Set default password
-				userEntityRequest.setPassword(RandomStringUtils.randomAlphabetic(10));
-				userEntityResponse = userRepository.save(userEntityRequest);
-
-				// Convert userRequestDTO to userEntityRequest
-				userResponseDTO = modelMapper.map(userEntityResponse, UserResponseDTO.class);
-
-				String type = "RegistrationWelcome";
-
-				// Send email
-				mailClient.prepareAndSend(userRequestDTO.getEmail(), type);
-
-				customMessageList = ArrayListCustomMessage.setMessage("Created new user and added to the project",
-						HttpStatus.CREATED);
-				resource = new Resources<>(customMessageList);
-				resource.add(linkTo(UserController.class).withSelfRel());
 			}
 
 		} catch (Exception e) {
@@ -262,9 +239,6 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Transactional
 	public ResponseEntity<?> addUser(UserRequestDTO userRequestDTO) {
 
@@ -280,16 +254,16 @@ public class UserServiceImpl implements UserService {
 			// Check if email exists in the database
 			if (userEntity != null) {
 				customMessageList = ArrayListCustomMessage.setMessage(
-						"The requested user actually exists. Please change the email.", HttpStatus.BAD_REQUEST);
+						"The requested user actually exists. Please try with other email.", HttpStatus.NO_CONTENT);
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(UserController.class).withSelfRel());
 
-				return new ResponseEntity<>(resource, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
 			}
 
-//			byte[] passwordBytes = Base64.getDecoder().decode(userRequestDTO.getPassword());
-//			String decodedPassword = new String(passwordBytes);
-//			entityRequest.setPassword(decodedPassword);
+			byte[] passwordBytes = Base64.getDecoder().decode(userRequestDTO.getPassword());
+			String decodedPassword = new String(passwordBytes);
+			entityRequest.setPassword(decodedPassword);
 
 			userRepository.save(entityRequest);
 
@@ -311,11 +285,8 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Transactional
-	public ResponseEntity<?> updateUser(int id, UserRequestDTO userRequestDTO) {
+	public ResponseEntity<?> updateUser(int userId, UserRequestDTO userRequestDTO) {
 
 		Resources<CustomMessage> resource = null;
 
@@ -330,33 +301,34 @@ public class UserServiceImpl implements UserService {
 				customMessageList = ArrayListCustomMessage.setMessage("Request body is null!", HttpStatus.BAD_REQUEST);
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(UserController.class).withSelfRel());
-				return new ResponseEntity<>(resource, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
 			}
 
 			// Find user by ID for check if exists in DB
-			UserEntity userEntity = userRepository.findById(id);
+			UserEntity userEntity = userRepository.findById(userId);
 
 			// If exists
 			if (userEntity != null) {
 
+				UserEntity entityRequest = modelMapper.map(userRequestDTO, UserEntity.class);
+
 				// The user ID and email will always be the same, so we do not allow it to
 				// be updated, for them we overwrite the field with the original value.
-				userRequestDTO.setId(userEntity.getId());
-				userRequestDTO.setEmail(userEntity.getEmail());
+				entityRequest.setId(userEntity.getId());
+				entityRequest.setEmail(userEntity.getEmail());
 
-				UserEntity entityRequest = modelMapper.map(userRequestDTO, UserEntity.class);
 				userRepository.save(entityRequest);
 
 			} else {
-				customMessageList = ArrayListCustomMessage.setMessage("User id " + id + " Not Found!",
-						HttpStatus.BAD_REQUEST);
+				customMessageList = ArrayListCustomMessage.setMessage("User id " + userId + " Not Found!",
+						HttpStatus.NO_CONTENT);
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(UserController.class).withSelfRel());
-				return new ResponseEntity<>(resource, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
 			}
 
 			resource = new Resources<>(customMessageList);
-			resource.add(linkTo(UserController.class).slash(userRequestDTO.getId()).withSelfRel());
+			resource.add(linkTo(UserController.class).slash(userId).withSelfRel());
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
@@ -367,16 +339,12 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	public ResponseEntity<UserResponseDTO> deleteUser(int id) {
+	public ResponseEntity<?> deleteUser(int userId) {
 
 		UserResponseDTO userResponseDTO = null;
 
 		try {
-			userRepository.deleteById(id);
+			userRepository.deleteById(userId);
 
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());

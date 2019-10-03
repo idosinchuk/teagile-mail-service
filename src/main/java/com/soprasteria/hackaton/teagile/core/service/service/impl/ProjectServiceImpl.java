@@ -28,12 +28,6 @@ import com.soprasteria.hackaton.teagile.core.service.repository.ProjectRepositor
 import com.soprasteria.hackaton.teagile.core.service.repository.UserRepository;
 import com.soprasteria.hackaton.teagile.core.service.service.ProjectService;
 
-/**
- * Implementation for project service
- * 
- * @author Igor Dosinchuk
- *
- */
 @Service("ProjectService")
 public class ProjectServiceImpl implements ProjectService {
 
@@ -48,30 +42,38 @@ public class ProjectServiceImpl implements ProjectService {
 
 	public static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public ResponseEntity<List<ProjectResponseDTO>> getAllProjectsByUserId(int userId) {
+	public ResponseEntity<?> getAllProjectsByUserId(int userId) {
 
+		Resources<CustomMessage> resource = null;
+		List<CustomMessage> customMessageList = null;
+		List<ProjectResponseDTO> projects = new ArrayList<>();
+		
+		try {
+			
 		UserEntity entityResponse = userRepository.findById(userId);
 
 		if (entityResponse.getProjects().isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			customMessageList = ArrayListCustomMessage.setMessage("There are not meetings!",
+					HttpStatus.NO_CONTENT);
+			resource = new Resources<>(customMessageList);
+			resource.add(linkTo(ProjectController.class).withSelfRel());
+			return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
 		}
+		
 		// Convert Entity response to DTO
-		List<ProjectResponseDTO> projects = modelMapper.map(entityResponse.getProjects(),
+		projects = modelMapper.map(entityResponse.getProjects(),
 				new TypeToken<List<ProjectResponseDTO>>() {
 				}.getType());
-
+		
+		} catch (Exception e){
+			logger.error("An error occurred! {}", e.getMessage());
+			return CustomErrorType.returnResponsEntityError(e.getMessage());
+		}
 		return new ResponseEntity<>(projects, HttpStatus.OK);
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	public ResponseEntity<ProjectResponseDTO> getProject(int id) {
+	public ResponseEntity<?> getProject(int id) {
 
 		ProjectResponseDTO projectResponseDTO = null;
 		Resources<CustomMessage> resource = null;
@@ -101,9 +103,6 @@ public class ProjectServiceImpl implements ProjectService {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Transactional
 	public ResponseEntity<?> addProject(ProjectRequestDTO projectRequestDTO, int userId) {
 
@@ -129,7 +128,7 @@ public class ProjectServiceImpl implements ProjectService {
 			ProjectEntity projectEntityResponse = projectRepository.save(projectEntityRequest);
 
 			// If project was created successfully, add project to user
-			if (projectEntityResponse != null) {										
+			if (projectEntityResponse != null) {
 				userEntity.getProjects().add(projectEntityResponse);
 				userRepository.save(userEntity);
 			}
@@ -147,9 +146,6 @@ public class ProjectServiceImpl implements ProjectService {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Transactional
 	public ResponseEntity<?> updateProject(int id, ProjectRequestDTO projectRequestDTO) {
 
@@ -160,14 +156,6 @@ public class ProjectServiceImpl implements ProjectService {
 			List<CustomMessage> customMessageList = null;
 
 			customMessageList = ArrayListCustomMessage.setMessage("Patch project process", HttpStatus.OK);
-
-			// Check if request is null
-			if (projectRequestDTO == null) {
-				customMessageList = ArrayListCustomMessage.setMessage("Request body is null!", HttpStatus.BAD_REQUEST);
-				resource = new Resources<>(customMessageList);
-				resource.add(linkTo(ProjectController.class).withSelfRel());
-				return new ResponseEntity<>(resource, HttpStatus.BAD_REQUEST);
-			}
 
 			// Find project by ID for check if exists in DB
 			ProjectEntity projectEntity = projectRepository.findById(id);
@@ -202,11 +190,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	public ResponseEntity<ProjectResponseDTO> deleteProject(int id) {
+	public ResponseEntity<?> deleteProject(int id) {
 
 		ProjectResponseDTO projectResponseDTO = null;
 

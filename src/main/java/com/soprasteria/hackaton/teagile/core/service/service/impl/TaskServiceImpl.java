@@ -2,6 +2,7 @@ package com.soprasteria.hackaton.teagile.core.service.service.impl;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.soprasteria.hackaton.teagile.core.service.common.ArrayListCustomMessage;
 import com.soprasteria.hackaton.teagile.core.service.common.CustomErrorType;
 import com.soprasteria.hackaton.teagile.core.service.common.CustomMessage;
+import com.soprasteria.hackaton.teagile.core.service.controller.MeetingController;
 import com.soprasteria.hackaton.teagile.core.service.controller.TaskController;
 import com.soprasteria.hackaton.teagile.core.service.controller.UserController;
 import com.soprasteria.hackaton.teagile.core.service.dto.TaskRequestDTO;
@@ -29,12 +31,6 @@ import com.soprasteria.hackaton.teagile.core.service.repository.ProjectRepositor
 import com.soprasteria.hackaton.teagile.core.service.repository.TaskRepository;
 import com.soprasteria.hackaton.teagile.core.service.service.TaskService;
 
-/**
- * Implementation for Task service
- * 
- * @author Igor Dosinchuk
- *
- */
 @Service("Taskservice")
 public class TaskServiceImpl implements TaskService {
 
@@ -52,39 +48,45 @@ public class TaskServiceImpl implements TaskService {
 
 	public static final Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public ResponseEntity<List<TaskResponseDTO>> getAllTasksByProjectId(int projectId) {
+	public ResponseEntity<?> getAllTasksByProjectId(int projectId) {
 
-		List<TaskEntity> entityResponse = taskRepository.findByProjectId(projectId);
+		Resources<CustomMessage> resource = null;
+		List<CustomMessage> customMessageList = null;
+		List<TaskResponseDTO> tasks = new ArrayList<>();
+		
+		try {
+			List<TaskEntity> entityResponse = taskRepository.findByProjectId(projectId);
 
-		if (entityResponse == null) {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			if (entityResponse.isEmpty()) {
+				customMessageList = ArrayListCustomMessage.setMessage("There are not meetings!",
+						HttpStatus.NO_CONTENT);
+				resource = new Resources<>(customMessageList);
+				resource.add(linkTo(MeetingController.class).withSelfRel());
+				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
+			}
+
+			// Convert Entity response to DTO
+			tasks = modelMapper.map(entityResponse, new TypeToken<List<TaskResponseDTO>>() {
+			}.getType());
+
+		} catch (Exception e) {
+			logger.error("An error occurred! {}", e.getMessage());
+			return CustomErrorType.returnResponsEntityError(e.getMessage());
 		}
-
-		// Convert Entity response to DTO
-		List<TaskResponseDTO> tasks = modelMapper.map(entityResponse, new TypeToken<List<TaskResponseDTO>>() {
-		}.getType());
-
+		
 		return new ResponseEntity<>(tasks, HttpStatus.OK);
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
 	@Transactional
-	public ResponseEntity<TaskResponseDTO> addTask(TaskRequestDTO taskRequestDTO) {
+	public ResponseEntity<?> addTask(int projectId, TaskRequestDTO taskRequestDTO) {
 
+		List<CustomMessage> customMessageList = null;
 		Resources<CustomMessage> resource = null;
 		TaskResponseDTO taskResponseDTO = null;
 
 		try {
-			List<CustomMessage> customMessageList = null;
-
-			ProjectEntity projectEntity = projectRepository.findById(taskRequestDTO.getProjectId());
+			ProjectEntity projectEntity = projectRepository.findById(projectId);
 
 			// Check if projectId exists in the database
 			if (projectEntity == null) {
@@ -115,9 +117,9 @@ public class TaskServiceImpl implements TaskService {
 			taskResponseDTO = modelMapper.map(taskEntityResponse, TaskResponseDTO.class);
 
 			customMessageList = ArrayListCustomMessage.setMessage("Created new Task", HttpStatus.CREATED);
-
 			resource = new Resources<>(customMessageList);
 			resource.add(linkTo(TaskController.class).withSelfRel());
+			
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
@@ -127,52 +129,40 @@ public class TaskServiceImpl implements TaskService {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Transactional
-	public ResponseEntity<TaskResponseDTO> updateTask(int id, int projectId, TaskRequestDTO taskRequestDTO) {
+	public ResponseEntity<?> updateTask(int taskId, int projectId, TaskRequestDTO taskRequestDTO) {
 
+		List<CustomMessage> customMessageList = null;
 		Resources<CustomMessage> resource = null;
 		TaskResponseDTO taskResponseDTO = null;
 
 		try {
-
-			List<CustomMessage> customMessageList = null;
-
 			customMessageList = ArrayListCustomMessage.setMessage("Patch task process", HttpStatus.OK);
 
-			// Check if request is null
-			if (taskRequestDTO == null) {
-				customMessageList = ArrayListCustomMessage.setMessage("Request body is null!", HttpStatus.BAD_REQUEST);
-				resource = new Resources<>(customMessageList);
-				resource.add(linkTo(TaskController.class).withSelfRel());
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-			}
-
 			// Find Task by ID for check if exists in DB
-			TaskEntity taskEntity = taskRepository.findByIdAndProjectId(id, projectId);
+			TaskEntity taskEntity = taskRepository.findByIdAndProjectId(taskId, projectId);
 
 			// If exists
 			if (taskEntity != null) {
+				TaskEntity entityRequest = modelMapper.map(taskRequestDTO, TaskEntity.class);
 
 				// The Task ID will always be the same, so we do not allow it to
 				// be updated, for them we overwrite the field with the original value.
-				taskRequestDTO.setId(taskEntity.getId());
+				entityRequest.setId(taskEntity.getId());
 
-				TaskEntity entityRequest = modelMapper.map(taskRequestDTO, TaskEntity.class);
 				taskRepository.save(entityRequest);
 
 			} else {
-				customMessageList = ArrayListCustomMessage.setMessage("Task id " + id + " Not Found!",
+				customMessageList = ArrayListCustomMessage.setMessage("Task id " + taskId + " Not Found!",
 						HttpStatus.BAD_REQUEST);
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(TaskController.class).withSelfRel());
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(resource, HttpStatus.BAD_REQUEST);
 			}
 
 			resource = new Resources<>(customMessageList);
-			resource.add(linkTo(TaskController.class).slash(taskRequestDTO.getId()).withSelfRel());
+			resource.add(linkTo(TaskController.class).slash(taskId).withSelfRel());
+			
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
@@ -183,17 +173,13 @@ public class TaskServiceImpl implements TaskService {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	public ResponseEntity<TaskResponseDTO> deleteTask(int id, int projectId) {
+	public ResponseEntity<?> deleteTask(int taskId, int projectId) {
 
 		TaskResponseDTO taskResponseDTO = null;
 
 		try {
-			taskRepository.deleteByIdAndProjectId(id, projectId);
-
+			taskRepository.deleteByIdAndProjectId(taskId, projectId);
+			
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());

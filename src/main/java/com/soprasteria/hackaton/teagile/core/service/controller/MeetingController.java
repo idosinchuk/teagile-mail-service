@@ -1,7 +1,5 @@
 package com.soprasteria.hackaton.teagile.core.service.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -16,24 +14,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.soprasteria.hackaton.teagile.core.service.dto.MeetingRequestDTO;
-import com.soprasteria.hackaton.teagile.core.service.dto.MeetingResponseDTO;
 import com.soprasteria.hackaton.teagile.core.service.service.MeetingService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-/**
- * Controller for meeting
- * 
- * @author Igor Dosinchuk
- * @author Luis Rapestre
- * 
- */
 @RestController
 @Api(value = "API Rest for Meeting.")
 @RequestMapping(value = "/api/v1")
@@ -44,70 +33,41 @@ public class MeetingController {
 	@Autowired
 	MeetingService meetingService;
 
-	/**
-	 * Retrieve list of all meetings.
-	 * 
-	 * @param pageable paging fields
-	 * @return ResponseEntity with paged list of all meetings, headers and status
-	 */
-	@GetMapping(path = "/meetings", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/projects/{projectId}/meetings", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve list of all meetings.")
-	public ResponseEntity<List<MeetingResponseDTO>> getAllMeetingsByProjectId(
-			@RequestParam("projectId") int projectId) {
+	public ResponseEntity<?> getAllMeetingsByProjectId(
+			@PathVariable("projectId") int projectId) {
 
 		logger.info("Fetching all meetings by projectId");
 		return meetingService.getAllMeetingsByProjectId(projectId);
 	}
 
-	/**
-	 * Add a meeting.
-	 * 
-	 * @param meetingRequestDTO object to save
-	 * @return ResponseEntity with status and meetingResponseDTO
-	 */
-	@PostMapping(path = "/meetings", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/projects/{projectId}/meetings", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Add a meeting.")
-	public ResponseEntity<MeetingResponseDTO> addMeeting(@Valid @RequestBody MeetingRequestDTO meetingRequestDTO) {
+	public ResponseEntity<?> addMeeting(@PathVariable("projectId") int projectId, @Valid @RequestBody MeetingRequestDTO meetingRequestDTO) {
 
 		logger.info("Process add meeting");
-		return meetingService.addMeeting(meetingRequestDTO);
+		return meetingService.addMeeting(projectId, meetingRequestDTO);
 	}
 
-	/**
-	 * Update a meeting
-	 * 
-	 * @param id                meeting id
-	 * @param id                project Id
-	 * 
-	 * @param meetingRequestDTO object to update
-	 * @return ResponseEntity with resource and status
-	 */
-	@PatchMapping(path = "/meetings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping(path = "/projects/{projectId}/meetings/{meetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Update the meeting.")
-	public ResponseEntity<MeetingResponseDTO> updateMeeting(@PathVariable("id") int id, int projectId,
+	public ResponseEntity<?> updateMeeting(@PathVariable("projectId") int projectId, @PathVariable("meetingId") int meetingId,
 			@RequestBody MeetingRequestDTO meetingRequestDTO) {
 
 		logger.info("Process patch meeting");
-		return meetingService.updateMeeting(id, projectId, meetingRequestDTO);
+		return meetingService.updateMeeting(projectId, meetingId, meetingRequestDTO);
 	}
 
-	/**
-	 * Retrieve meeting by Id.
-	 * 
-	 * @param id meeting Id
-	 * @param id project Id
-	 * 
-	 * @return ResponseEntity with status and meetingResponseDTO
-	 */
-	@DeleteMapping(path = "/meetings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(path = "/projects/{projectId}/meetings/{meetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Delete meeting by Id.")
-	public ResponseEntity<MeetingResponseDTO> deleteMeeting(@PathVariable("id") int id, int projectId) {
+	public ResponseEntity<?> deleteMeeting(@PathVariable("projectId") int projectId, @PathVariable("meetingId") int meetingId) {
 
-		logger.info("Deleting meeting with id {} ", id);
-		return meetingService.deleteMeeting(id, projectId);
+		logger.info("Deleting meeting with projectId and meetingId {} ", projectId, meetingId);
+		return meetingService.deleteMeeting(projectId, meetingId);
 	}
 }

@@ -2,8 +2,6 @@ package com.soprasteria.hackaton.teagile.core.service.dto;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.annotation.Id;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
@@ -22,10 +20,6 @@ import lombok.Data;
 @Data
 @ApiModel(reference = "UserRequest", description = "Model request for User.")
 public class UserRequestDTO {
-
-	@Id
-	@ApiModelProperty(value = "Id", example = "1")
-	private int id;
 
 	@NotNull
 	@ApiModelProperty(value = "User name", example = "Jhon")
