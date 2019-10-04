@@ -31,10 +31,10 @@ public class LoginServiceImpl implements LoginService {
 
 	public ResponseEntity<?> getLogin(String email, String password) {
 
+		List<CustomMessage> customMessageList = null;
 		Resources<CustomMessage> resource = null;
 
 		try {
-			List<CustomMessage> customMessageList = null;
 
 			byte[] passwordBytes = Base64.getDecoder().decode(password);
 			String decodedPassword = new String(passwordBytes);
@@ -47,7 +47,7 @@ public class LoginServiceImpl implements LoginService {
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(UserController.class).withSelfRel());
 
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
 			}
 
 		} catch (Exception e) {

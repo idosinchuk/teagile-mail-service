@@ -55,20 +55,18 @@ public class MeetingServiceImpl implements MeetingService {
 
 		try {
 
-			List<MeetingEntity> entityResponse = meetingRepository.findByProjectId(projectId);
+			List<MeetingEntity> entityResponse = meetingRepository.findByProject_Id(projectId);
 
 			if (entityResponse == null) {
-				customMessageList = ArrayListCustomMessage.setMessage("There are not meetings!",
-						HttpStatus.NO_CONTENT);
+				customMessageList = ArrayListCustomMessage.setMessage("There are not meetings!", HttpStatus.NO_CONTENT);
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(MeetingController.class).withSelfRel());
 				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
 			}
 
 			// Convert Entity response to DTO
-			meetings = modelMapper.map(entityResponse,
-					new TypeToken<List<MeetingResponseDTO>>() {
-					}.getType());
+			meetings = modelMapper.map(entityResponse, new TypeToken<List<MeetingResponseDTO>>() {
+			}.getType());
 
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
@@ -78,7 +76,7 @@ public class MeetingServiceImpl implements MeetingService {
 		return new ResponseEntity<>(meetings, HttpStatus.OK);
 
 	}
-
+	
 	@Transactional
 	public ResponseEntity<?> addMeeting(int projectId, MeetingRequestDTO meetingRequestDTO) {
 
@@ -98,15 +96,7 @@ public class MeetingServiceImpl implements MeetingService {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
 
-			// If priority is null, set default priority.
-			if (meetingRequestDTO.getPriority() == 0) {
-				meetingRequestDTO.setPriority(5);
-			}
-
-			// If status is null, set default status.
-			if (meetingRequestDTO.getStatus() == null) {
-				meetingRequestDTO.setStatus("created");
-			}
+			checkPriorityAndStatus(meetingRequestDTO);
 
 			// Convert meetingRequestDTO to MeetingEntity
 			MeetingEntity entityRequest = modelMapper.map(meetingRequestDTO, MeetingEntity.class);
@@ -116,17 +106,12 @@ public class MeetingServiceImpl implements MeetingService {
 			// Convert meetingEntityResponse to MeetingResponseDTO
 			meetingResponseDTO = modelMapper.map(meetingEntityResponse, MeetingResponseDTO.class);
 
-			customMessageList = ArrayListCustomMessage.setMessage("Created new Meeting", HttpStatus.CREATED);
-
-			resource = new Resources<>(customMessageList);
-			resource.add(linkTo(MeetingController.class).withSelfRel());
-			
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
 		}
 
-		return new ResponseEntity<>(meetingResponseDTO, HttpStatus.OK);
+		return new ResponseEntity<>(meetingResponseDTO, HttpStatus.CREATED);
 
 	}
 
@@ -135,47 +120,35 @@ public class MeetingServiceImpl implements MeetingService {
 
 		List<CustomMessage> customMessageList = null;
 		Resources<CustomMessage> resource = null;
-		MeetingResponseDTO meetingResponseDTO = null;
 
 		try {
-			// Find Meeting by ID for check if exists in DB
+			// Check if meeting exists in the database
 			MeetingEntity meetingEntity = meetingRepository.findByIdAndProjectId(meetingId, projectId);
 
-			// If exists
-			if (meetingEntity != null) {
-
-				MeetingEntity entityRequest = modelMapper.map(meetingRequestDTO, MeetingEntity.class);
-
-				// The Meeting ID will always be the same, so we do not allow it to
-				// be updated, for them we overwrite the field with the original value.
-				entityRequest.setId(meetingEntity.getId());
-
-				meetingRepository.save(entityRequest);
-
-			} else {
-				customMessageList = ArrayListCustomMessage.setMessage("Meeting id " + meetingId + " Not Found!",
+			if (meetingEntity == null) {
+				customMessageList = ArrayListCustomMessage.setMessage("Meeting Id {}" + meetingId + " Not Found!",
 						HttpStatus.NO_CONTENT);
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(MeetingController.class).withSelfRel());
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
 
-			resource = new Resources<>(customMessageList);
-			resource.add(linkTo(MeetingController.class).slash(meetingId).withSelfRel());
+			MeetingEntity entityRequest = modelMapper.map(meetingRequestDTO, MeetingEntity.class);
+			entityRequest.setId(meetingId);
 			
+			meetingRepository.save(entityRequest);
+
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
 
 		}
 
-		return new ResponseEntity<>(meetingResponseDTO, HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 
 	}
 
 	public ResponseEntity<?> deleteMeeting(int meetingId, int projectId) {
-
-		MeetingResponseDTO meetingResponseDTO = null;
 
 		try {
 			meetingRepository.deleteByIdAndProjectId(meetingId, projectId);
@@ -185,7 +158,24 @@ public class MeetingServiceImpl implements MeetingService {
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
 		}
 
-		return new ResponseEntity<>(meetingResponseDTO, HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 
 	}
+
+	// Check if priority and status are present
+	private static MeetingRequestDTO checkPriorityAndStatus(MeetingRequestDTO meetingRequestDTO) {
+
+		// If priority is null, set default priority.
+		if (meetingRequestDTO.getPriority() == 0) {
+			meetingRequestDTO.setPriority(5);
+		}
+
+		// If status is null, set default CREATED status.
+		if (meetingRequestDTO.getStatus() == null) {
+			meetingRequestDTO.setStatus("CREATED");
+		}
+
+		return meetingRequestDTO;
+	}
+
 }

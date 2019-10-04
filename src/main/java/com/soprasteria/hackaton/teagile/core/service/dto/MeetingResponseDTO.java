@@ -8,21 +8,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-/**
- * Response DTO for Meeting
- * 
- * @author Igor Dosinchuk
- * @author Luis Rapestre
- * 
- * 
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @ApiModel(reference = "MeetingResponse", description = "Model response for Meeting.")
 public class MeetingResponseDTO {
 
 	@Id
-	@ApiModelProperty(value = "Id", example = "1")
+	@ApiModelProperty(value = "Meeting Id", example = "1")
 	private int id;
 
 	@ApiModelProperty(value = "Meeting title", example = "TEAgile")

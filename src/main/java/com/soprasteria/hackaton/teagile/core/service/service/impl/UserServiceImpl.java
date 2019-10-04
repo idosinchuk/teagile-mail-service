@@ -24,27 +24,16 @@ import com.soprasteria.hackaton.teagile.core.service.controller.MeetingControlle
 import com.soprasteria.hackaton.teagile.core.service.controller.UserController;
 import com.soprasteria.hackaton.teagile.core.service.dto.UserRequestDTO;
 import com.soprasteria.hackaton.teagile.core.service.dto.UserResponseDTO;
-import com.soprasteria.hackaton.teagile.core.service.entity.ProjectEntity;
 import com.soprasteria.hackaton.teagile.core.service.entity.UserEntity;
 import com.soprasteria.hackaton.teagile.core.service.mail.MailClient;
-import com.soprasteria.hackaton.teagile.core.service.repository.ProjectRepository;
 import com.soprasteria.hackaton.teagile.core.service.repository.UserRepository;
 import com.soprasteria.hackaton.teagile.core.service.service.UserService;
 
-/**
- * Implementation for user service
- * 
- * @author Igor Dosinchuk
- *
- */
 @Service("UserService")
 public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRepository userRepository;
-
-	@Autowired
-	private ProjectRepository projectRepository;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -177,68 +166,6 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	public ResponseEntity<?> addUserToProject(int projectId, int userId) {
-
-		UserResponseDTO userResponseDTO = null;
-		Resources<CustomMessage> resource = null;
-
-		try {
-			UserEntity userEntity;
-			ProjectEntity projectEntityResponse;
-
-			List<CustomMessage> customMessageList = null;
-
-			// Check if project exists in db
-			projectEntityResponse = projectRepository.findById(projectId);
-
-			// If project does not exists in db
-			if (projectEntityResponse == null) {
-				customMessageList = ArrayListCustomMessage.setMessage(
-						"The project does not exists. Please try to add to other project.", HttpStatus.NO_CONTENT);
-				resource = new Resources<>(customMessageList);
-				resource.add(linkTo(UserController.class).withSelfRel());
-
-				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
-			}
-
-			// Check if user exists in db
-			userEntity = userRepository.findById(userId);
-
-			// If user exists, add project to user
-			if (userEntity != null) {
-				List<ProjectEntity> projects;
-				projects = userEntity.getProjects();
-				projects.add(projectEntityResponse);
-				userEntity.setProjects(projects);
-
-				userRepository.save(userEntity);
-
-				customMessageList = ArrayListCustomMessage.setMessage("Added project to user", HttpStatus.CREATED);
-
-				resource = new Resources<>(customMessageList);
-				resource.add(linkTo(UserController.class).withSelfRel());
-
-				String type = "User added to project";
-
-				// TODO: Mandar mail con: Se te ha añadido al proyecto.
-				mailClient.prepareAndSend(userEntity.getEmail(), type);
-
-			}
-
-			else {
-				return new ResponseEntity<>(userResponseDTO, HttpStatus.NO_CONTENT);
-
-			}
-
-		} catch (Exception e) {
-			logger.error("An error occurred! {}", e.getMessage());
-			return CustomErrorType.returnResponsEntityError(e.getMessage());
-		}
-
-		return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
-
-	}
-
 	@Transactional
 	public ResponseEntity<?> addUser(UserRequestDTO userRequestDTO) {
 
@@ -304,18 +231,13 @@ public class UserServiceImpl implements UserService {
 				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
 			}
 
-			// Find user by ID for check if exists in DB
+			// Check if user exists in the database
 			UserEntity userEntity = userRepository.findById(userId);
 
-			// If exists
 			if (userEntity != null) {
 
 				UserEntity entityRequest = modelMapper.map(userRequestDTO, UserEntity.class);
-
-				// The user ID and email will always be the same, so we do not allow it to
-				// be updated, for them we overwrite the field with the original value.
-				entityRequest.setId(userEntity.getId());
-				entityRequest.setEmail(userEntity.getEmail());
+				entityRequest.setId(userId);
 
 				userRepository.save(entityRequest);
 

@@ -69,14 +69,6 @@ public class UserController {
 
 	}
 
-	@PostMapping(path = "projects/{projectId}/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Add project to user")
-	public ResponseEntity<?> addUserToProject(@PathVariable("projectId") int projectId, @PathVariable("userId") int userId) {
-
-		logger.info("Add project to user with projectId and userId {}", projectId, userId);
-		return userService.addUserToProject(projectId, userId);
-	}
-
 	@PostMapping(path = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Add a user.")
 	public ResponseEntity<?> addUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {

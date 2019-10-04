@@ -53,13 +53,12 @@ public class TaskServiceImpl implements TaskService {
 		Resources<CustomMessage> resource = null;
 		List<CustomMessage> customMessageList = null;
 		List<TaskResponseDTO> tasks = new ArrayList<>();
-		
+
 		try {
 			List<TaskEntity> entityResponse = taskRepository.findByProjectId(projectId);
 
 			if (entityResponse.isEmpty()) {
-				customMessageList = ArrayListCustomMessage.setMessage("There are not meetings!",
-						HttpStatus.NO_CONTENT);
+				customMessageList = ArrayListCustomMessage.setMessage("There are not meetings!", HttpStatus.NO_CONTENT);
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(MeetingController.class).withSelfRel());
 				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
@@ -73,7 +72,7 @@ public class TaskServiceImpl implements TaskService {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
 		}
-		
+
 		return new ResponseEntity<>(tasks, HttpStatus.OK);
 
 	}
@@ -97,16 +96,8 @@ public class TaskServiceImpl implements TaskService {
 
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
-
-			// If priority is null, set default priority.
-			if (taskRequestDTO.getPriority() == 0) {
-				taskRequestDTO.setPriority(5);
-			}
-
-			// If status is null, set default status.
-			if (taskRequestDTO.getStatus() == null) {
-				taskRequestDTO.setStatus("created");
-			}
+			
+			checkPriorityAndStatus(taskRequestDTO);
 
 			// Convert taskRequestDTO to TaskEntity
 			TaskEntity entityRequest = modelMapper.map(taskRequestDTO, TaskEntity.class);
@@ -116,10 +107,6 @@ public class TaskServiceImpl implements TaskService {
 			// Convert taskEntityResponse to TaskResponseDTO
 			taskResponseDTO = modelMapper.map(taskEntityResponse, TaskResponseDTO.class);
 
-			customMessageList = ArrayListCustomMessage.setMessage("Created new Task", HttpStatus.CREATED);
-			resource = new Resources<>(customMessageList);
-			resource.add(linkTo(TaskController.class).withSelfRel());
-			
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
@@ -134,58 +121,61 @@ public class TaskServiceImpl implements TaskService {
 
 		List<CustomMessage> customMessageList = null;
 		Resources<CustomMessage> resource = null;
-		TaskResponseDTO taskResponseDTO = null;
 
 		try {
-			customMessageList = ArrayListCustomMessage.setMessage("Patch task process", HttpStatus.OK);
-
-			// Find Task by ID for check if exists in DB
+			// Check if task exists in the database
 			TaskEntity taskEntity = taskRepository.findByIdAndProjectId(taskId, projectId);
 
-			// If exists
-			if (taskEntity != null) {
-				TaskEntity entityRequest = modelMapper.map(taskRequestDTO, TaskEntity.class);
-
-				// The Task ID will always be the same, so we do not allow it to
-				// be updated, for them we overwrite the field with the original value.
-				entityRequest.setId(taskEntity.getId());
-
-				taskRepository.save(entityRequest);
-
-			} else {
-				customMessageList = ArrayListCustomMessage.setMessage("Task id " + taskId + " Not Found!",
+			if (taskEntity == null) {
+				customMessageList = ArrayListCustomMessage.setMessage("Task Id {}" + taskId + " Not Found!",
 						HttpStatus.BAD_REQUEST);
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(TaskController.class).withSelfRel());
 				return new ResponseEntity<>(resource, HttpStatus.BAD_REQUEST);
 			}
 
-			resource = new Resources<>(customMessageList);
-			resource.add(linkTo(TaskController.class).slash(taskId).withSelfRel());
-			
+			TaskEntity entityRequest = modelMapper.map(taskRequestDTO, TaskEntity.class);
+			entityRequest.setId(taskId);
+
+			taskRepository.save(entityRequest);
+
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
 
 		}
 
-		return new ResponseEntity<>(taskResponseDTO, HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 
 	}
 
 	public ResponseEntity<?> deleteTask(int taskId, int projectId) {
 
-		TaskResponseDTO taskResponseDTO = null;
-
 		try {
 			taskRepository.deleteByIdAndProjectId(taskId, projectId);
-			
+
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
 		}
 
-		return new ResponseEntity<>(taskResponseDTO, HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 
+	}
+
+	// Check if priority and status are present
+	private static TaskRequestDTO checkPriorityAndStatus(TaskRequestDTO taskRequestDTO) {
+
+		// If priority is null, set default priority.
+		if (taskRequestDTO.getPriority() == 0) {
+			taskRequestDTO.setPriority(5);
+		}
+
+		// If status is null, set default CREATED status.
+		if (taskRequestDTO.getStatus() == null) {
+			taskRequestDTO.setStatus("CREATED");
+		}
+
+		return taskRequestDTO;
 	}
 }

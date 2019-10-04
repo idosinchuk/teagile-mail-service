@@ -33,16 +33,16 @@ public class MeetingController {
 	@Autowired
 	MeetingService meetingService;
 
-	@GetMapping(path = "/projects/{projectId}/meetings", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/meetings/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@ApiOperation(value = "Retrieve list of all meetings.")
+	@ApiOperation(value = "Retrieve list of all meetings by projectId.")
 	public ResponseEntity<?> getAllMeetingsByProjectId(
 			@PathVariable("projectId") int projectId) {
 
 		logger.info("Fetching all meetings by projectId");
 		return meetingService.getAllMeetingsByProjectId(projectId);
 	}
-
+	
 	@PostMapping(path = "/projects/{projectId}/meetings", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Add a meeting.")

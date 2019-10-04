@@ -34,22 +34,24 @@ public class ProjectController {
 	@Autowired
 	ProjectService projectService;
 
-	@GetMapping(path = "/projects", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/users/{userId}/projects", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@ApiOperation(value = "Retrieve list of all projects filtered by userId")
-	public ResponseEntity<?> getAllProjectsByUserId(@RequestParam("userId") int userId) {
+	@ApiOperation(value = "Retrieve list of all projects by userId")
+	public ResponseEntity<?> getAllProjectsByUserId(@PathVariable("userId") int userId) {
 
 		logger.info("Fetching all projects by UserId");
 		return projectService.getAllProjectsByUserId(userId);
 	}
+	
 
-	@GetMapping(path = "/projects/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+
+	@GetMapping(path = "projects/{projectId}/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@ApiOperation(value = "Retrieve project by id.")
-	public ResponseEntity<?> getProject(@PathVariable("id") int id) {
+	@ApiOperation(value = "Retrieve project by projectId and userId.")
+	public ResponseEntity<?> getProject(@PathVariable("projectId") int projectId, @PathVariable("userId") int userId) {
 
-		logger.info("Fetching project with id {}", id);
-		return projectService.getProject(id);
+		logger.info("Fetching project with id and userId {}", projectId, userId);
+		return projectService.getProjectByIdUserId(projectId, userId);
 	}
 
 	@PostMapping(path = "/projects", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -63,25 +65,33 @@ public class ProjectController {
 		return projectService.addProject(projectRequestDTO, userId);
 
 	}
+	
+	@PostMapping(path = "/projects/{projectId}/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Add project to user")
+	public ResponseEntity<?> addUserToProject(@PathVariable("projectId") int projectId, @PathVariable("userId") int userId) {
 
-	@PatchMapping(path = "/projects/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+		logger.info("Add project to user with projectId and userId {}", projectId, userId);
+		return projectService.addUserToProject(projectId, userId);
+	}
+
+	@PatchMapping(path = "/projects/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Update the project.")
-	public ResponseEntity<?> updateProject(@PathVariable("id") int id,
+	public ResponseEntity<?> updateProject(@PathVariable("projectId") int projectId,
 			@RequestBody ProjectRequestDTO projectRequestDTO) {
 
 		logger.info("Process patch project");
 
-		return projectService.updateProject(id, projectRequestDTO);
+		return projectService.updateProject(projectId, projectRequestDTO);
 
 	}
 
-	@DeleteMapping(path = "/projects/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(path = "/projects/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@ApiOperation(value = "Delete project by Id.")
-	public ResponseEntity<?> deleteUser(@PathVariable("id") int id) {
+	@ApiOperation(value = "Delete project by projectId.")
+	public ResponseEntity<?> deleteUser(@PathVariable("projectId") int projectId) {
 
-		logger.info("Deleting user with id {} ", id);
-		return projectService.deleteProject(id);
+		logger.info("Deleting user with projectId {} ", projectId);
+		return projectService.deleteProject(projectId);
 	}
 }

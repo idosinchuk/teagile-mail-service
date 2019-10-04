@@ -1,12 +1,18 @@
 package com.soprasteria.hackaton.teagile.core.service.entity;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -15,13 +21,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Entity for Project
- * 
- * @author Igor Dosinchuk
- * @author Luis Rapestre
- *
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @NoArgsConstructor
@@ -31,7 +30,7 @@ public class ProjectEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "project_id")
+	@Column(name = "project_id", updatable = false)
 	private int id;
 
 	@Column(name = "name", nullable = false)
@@ -45,4 +44,8 @@ public class ProjectEntity {
 
 	@OneToMany(mappedBy = "project")
 	private List<MeetingEntity> meetings;
+	
+	@JoinTable(name = "user_has_project", joinColumns = @JoinColumn(name = "project_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "user_id", nullable = false))
+    @ManyToMany(cascade = CascadeType.ALL)
+	private Set<UserEntity> users = new HashSet<>();
 }

@@ -8,21 +8,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-/**
- * Response DTO for Task
- * 
- * @author Igor Dosinchuk
- * @author Luis Rapestre
- * 
- * 
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @ApiModel(reference = "TaskResponse", description = "Model response for Task.")
 public class TaskResponseDTO {
 
 	@Id
-	@ApiModelProperty(value = "Id", example = "1")
+	@ApiModelProperty(value = "Task Id", example = "1")
 	private int id;
 
 	@ApiModelProperty(value = "Task title", example = "TEAgile")

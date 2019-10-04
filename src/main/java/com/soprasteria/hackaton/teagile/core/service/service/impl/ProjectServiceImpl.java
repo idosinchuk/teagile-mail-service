@@ -3,7 +3,9 @@ package com.soprasteria.hackaton.teagile.core.service.service.impl;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -20,10 +22,13 @@ import com.soprasteria.hackaton.teagile.core.service.common.ArrayListCustomMessa
 import com.soprasteria.hackaton.teagile.core.service.common.CustomErrorType;
 import com.soprasteria.hackaton.teagile.core.service.common.CustomMessage;
 import com.soprasteria.hackaton.teagile.core.service.controller.ProjectController;
+import com.soprasteria.hackaton.teagile.core.service.controller.UserController;
 import com.soprasteria.hackaton.teagile.core.service.dto.ProjectRequestDTO;
 import com.soprasteria.hackaton.teagile.core.service.dto.ProjectResponseDTO;
+import com.soprasteria.hackaton.teagile.core.service.dto.UserResponseDTO;
 import com.soprasteria.hackaton.teagile.core.service.entity.ProjectEntity;
 import com.soprasteria.hackaton.teagile.core.service.entity.UserEntity;
+import com.soprasteria.hackaton.teagile.core.service.mail.MailClient;
 import com.soprasteria.hackaton.teagile.core.service.repository.ProjectRepository;
 import com.soprasteria.hackaton.teagile.core.service.repository.UserRepository;
 import com.soprasteria.hackaton.teagile.core.service.service.ProjectService;
@@ -40,32 +45,36 @@ public class ProjectServiceImpl implements ProjectService {
 	@Autowired
 	private ModelMapper modelMapper;
 
+	@Autowired
+	MailClient mailClient;
+
 	public static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
 	public ResponseEntity<?> getAllProjectsByUserId(int userId) {
 
 		Resources<CustomMessage> resource = null;
 		List<CustomMessage> customMessageList = null;
-		List<ProjectResponseDTO> projects = new ArrayList<>();
-		
-		try {
-			
-		UserEntity entityResponse = userRepository.findById(userId);
+		List<ProjectResponseDTO> projects;
 
-		if (entityResponse.getProjects().isEmpty()) {
-			customMessageList = ArrayListCustomMessage.setMessage("There are not meetings!",
-					HttpStatus.NO_CONTENT);
-			resource = new Resources<>(customMessageList);
-			resource.add(linkTo(ProjectController.class).withSelfRel());
-			return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
-		}
-		
-		// Convert Entity response to DTO
-		projects = modelMapper.map(entityResponse.getProjects(),
-				new TypeToken<List<ProjectResponseDTO>>() {
-				}.getType());
-		
-		} catch (Exception e){
+		try {
+
+			Set<ProjectEntity> entityResponse = projectRepository.findByUsers_Id(userId);
+
+			if (entityResponse.isEmpty()) {
+				customMessageList = ArrayListCustomMessage.setMessage("There are not meetings!", HttpStatus.NO_CONTENT);
+				resource = new Resources<>(customMessageList);
+				resource.add(linkTo(ProjectController.class).withSelfRel());
+				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
+			}
+
+			// Convert Set to List
+			List<ProjectEntity> projectsEntity = new ArrayList<>(entityResponse);
+
+			// Convert Entity response to DTO
+			projects = modelMapper.map(projectsEntity, new TypeToken<List<ProjectResponseDTO>>() {
+			}.getType());
+
+		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
 		}
@@ -73,7 +82,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	}
 
-	public ResponseEntity<?> getProject(int id) {
+	public ResponseEntity<?> getProjectByIdUserId(int id, int userId) {
 
 		ProjectResponseDTO projectResponseDTO = null;
 		Resources<CustomMessage> resource = null;
@@ -81,14 +90,13 @@ public class ProjectServiceImpl implements ProjectService {
 		try {
 			List<CustomMessage> customMessageList = null;
 
-			ProjectEntity entityResponse = projectRepository.findById(id);
+			ProjectEntity entityResponse = projectRepository.findById_AndUsers_Id(id, userId);
 
 			if (entityResponse == null) {
 				customMessageList = ArrayListCustomMessage
 						.setMessage("The requested project does not exists. Please try again.", HttpStatus.NO_CONTENT);
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(ProjectController.class).withSelfRel());
-
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
 
@@ -106,11 +114,11 @@ public class ProjectServiceImpl implements ProjectService {
 	@Transactional
 	public ResponseEntity<?> addProject(ProjectRequestDTO projectRequestDTO, int userId) {
 
+		List<CustomMessage> customMessageList = null;
 		Resources<CustomMessage> resource = null;
+		ProjectResponseDTO projectResponseDTO = null;
 
 		try {
-			List<CustomMessage> customMessageList = null;
-
 			UserEntity userEntity = userRepository.findById(userId);
 
 			// Check if userId exists in the database
@@ -119,7 +127,6 @@ public class ProjectServiceImpl implements ProjectService {
 						"The requested userId does not exists. Please select correct user.", HttpStatus.BAD_REQUEST);
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(ProjectController.class).withSelfRel());
-
 				return new ResponseEntity<>(resource, HttpStatus.BAD_REQUEST);
 			}
 
@@ -127,72 +134,118 @@ public class ProjectServiceImpl implements ProjectService {
 
 			ProjectEntity projectEntityResponse = projectRepository.save(projectEntityRequest);
 
-			// If project was created successfully, add project to user
-			if (projectEntityResponse != null) {
-				userEntity.getProjects().add(projectEntityResponse);
-				userRepository.save(userEntity);
-			}
+			// Add project to user
+			userEntity.getProjects().add(projectEntityResponse);
+			userRepository.save(userEntity);
 
-			customMessageList = ArrayListCustomMessage.setMessage("Created new project", HttpStatus.CREATED);
-
-			resource = new Resources<>(customMessageList);
-			resource.add(linkTo(ProjectController.class).withSelfRel());
+			projectResponseDTO = modelMapper.map(projectEntityResponse, ProjectResponseDTO.class);
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
 		}
 
-		return new ResponseEntity<>(resource, HttpStatus.OK);
+		return new ResponseEntity<>(projectResponseDTO, HttpStatus.CREATED);
+
+	}
+
+	public ResponseEntity<?> addUserToProject(int projectId, int userId) {
+
+		UserResponseDTO userResponseDTO = null;
+		Resources<CustomMessage> resource = null;
+
+		try {
+			UserEntity userEntity;
+			ProjectEntity projectEntityResponse;
+
+			List<CustomMessage> customMessageList = null;
+
+			// Check if project exists in db
+			projectEntityResponse = projectRepository.findById(projectId);
+
+			// If project does not exists in db
+			if (projectEntityResponse == null) {
+				customMessageList = ArrayListCustomMessage.setMessage(
+						"The project does not exists. Please try to add to other project.", HttpStatus.NO_CONTENT);
+				resource = new Resources<>(customMessageList);
+				resource.add(linkTo(UserController.class).withSelfRel());
+
+				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
+			}
+
+			// Check if user exists in db
+			userEntity = userRepository.findById(userId);
+
+			// If user exists, add project to user
+			if (userEntity != null) {
+				// Convert Set to List
+				List<ProjectEntity> projects = new ArrayList<>(userEntity.getProjects());
+				projects.add(projectEntityResponse);
+				// Convert List to Set
+				Set<ProjectEntity> projectSet = new HashSet<>(projects);
+				userEntity.setProjects(projectSet);
+
+				userRepository.save(userEntity);
+
+				customMessageList = ArrayListCustomMessage.setMessage("Added project to user", HttpStatus.CREATED);
+
+				resource = new Resources<>(customMessageList);
+				resource.add(linkTo(UserController.class).withSelfRel());
+
+				String type = "User added to project";
+
+				// TODO: Mandar mail con: Se te ha añadido al proyecto.
+				mailClient.prepareAndSend(userEntity.getEmail(), type);
+
+			}
+
+			else {
+				return new ResponseEntity<>(userResponseDTO, HttpStatus.NO_CONTENT);
+
+			}
+
+		} catch (Exception e) {
+			logger.error("An error occurred! {}", e.getMessage());
+			return CustomErrorType.returnResponsEntityError(e.getMessage());
+		}
+
+		return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
 
 	}
 
 	@Transactional
-	public ResponseEntity<?> updateProject(int id, ProjectRequestDTO projectRequestDTO) {
+	public ResponseEntity<?> updateProject(int projectId, ProjectRequestDTO projectRequestDTO) {
 
+		List<CustomMessage> customMessageList = null;
 		Resources<CustomMessage> resource = null;
 
 		try {
 
-			List<CustomMessage> customMessageList = null;
-
-			customMessageList = ArrayListCustomMessage.setMessage("Patch project process", HttpStatus.OK);
-
-			// Find project by ID for check if exists in DB
-			ProjectEntity projectEntity = projectRepository.findById(id);
-
-			// If exists
-			if (projectEntity != null) {
-
-				// The project ID will always be the same, so we do not allow it to
-				// be updated, for them we overwrite the field with the original value.
-				projectRequestDTO.setId(projectEntity.getId());
-
-				ProjectEntity entityRequest = modelMapper.map(projectRequestDTO, ProjectEntity.class);
-				projectRepository.save(entityRequest);
-
-			} else {
-				customMessageList = ArrayListCustomMessage.setMessage("Project id " + id + " Not Found!",
-						HttpStatus.BAD_REQUEST);
+			// Check if project exists in the database
+			ProjectEntity projectEntity = projectRepository.findById(projectId);
+			if (projectEntity == null) {
+				customMessageList = ArrayListCustomMessage.setMessage("Project Id " + projectId + " Not Found!",
+						HttpStatus.NO_CONTENT);
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(ProjectController.class).withSelfRel());
-				return new ResponseEntity<>(resource, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
 			}
 
-			resource = new Resources<>(customMessageList);
-			resource.add(linkTo(ProjectController.class).slash(projectRequestDTO.getId()).withSelfRel());
+			ProjectEntity entityRequest = modelMapper.map(projectRequestDTO, ProjectEntity.class);
+			entityRequest.setId(projectId);
+
+			projectRepository.save(entityRequest);
+
 		} catch (Exception e) {
 			logger.error("An error occurred! {}", e.getMessage());
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
 
 		}
 
-		return new ResponseEntity<>(resource, HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 
 	}
 
 	public ResponseEntity<?> deleteProject(int id) {
-
-		ProjectResponseDTO projectResponseDTO = null;
 
 		try {
 			projectRepository.deleteById(id);
@@ -202,7 +255,7 @@ public class ProjectServiceImpl implements ProjectService {
 			return CustomErrorType.returnResponsEntityError(e.getMessage());
 		}
 
-		return new ResponseEntity<>(projectResponseDTO, HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 
 	}
 }

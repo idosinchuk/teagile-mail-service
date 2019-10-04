@@ -10,21 +10,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-/**
- * Response DTO for User
- * 
- * @author Igor Dosinchuk
- * @author Luis Rapestre
- * 
- * 
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @ApiModel(reference = "UserResponse", description = "Model response for User.")
 public class UserResponseDTO {
 
 	@Id
-	@ApiModelProperty(value = "Id", example = "1")
+	@ApiModelProperty(value = "User Id", example = "1")
 	private int id;
 
 	@ApiModelProperty(value = "User name", example = "Jhon")

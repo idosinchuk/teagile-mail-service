@@ -14,13 +14,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Entity for Task
- * 
- * @author Igor Dosinchuk
- * @author Luis Rapestre
- *
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @NoArgsConstructor
@@ -30,7 +23,7 @@ public class TaskEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "task_id")
+	@Column(name = "task_id", updatable = false)
 	private int id;
 
 	@Column(name = "title", nullable = false)

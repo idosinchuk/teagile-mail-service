@@ -14,8 +14,6 @@ public interface UserService {
 
 	ResponseEntity<?> getUserByEmailAndPassword(String email, String password);
 
-	ResponseEntity<?> addUserToProject(int projectId, int userId);
-
 	ResponseEntity<?> addUser(UserRequestDTO userRequestDTO);
 
 	ResponseEntity<?> updateUser(int id, UserRequestDTO userRequestDTO);

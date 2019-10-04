@@ -8,14 +8,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-/**
- * Request DTO for Meeting
- * 
- * @author Igor Dosinchuk
- * @author Luis Rapestre
- * 
- * 
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @ApiModel(reference = "MeetingRequest", description = "Model request for Meeting.")
