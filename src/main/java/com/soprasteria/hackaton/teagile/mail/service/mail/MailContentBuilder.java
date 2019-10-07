@@ -1,4 +1,4 @@
-package com.soprasteria.hackaton.teagile.core.service.mail;
+package com.soprasteria.hackaton.teagile.mail.service.mail;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

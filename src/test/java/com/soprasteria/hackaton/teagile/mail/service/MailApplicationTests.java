@@ -1,4 +1,4 @@
-package com.soprasteria.hackaton.teagile.core.service;
+package com.soprasteria.hackaton.teagile.mail.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class TeAgileHackatonApplicationTests {
+public class MailApplicationTests {
 
 	@Test
 	public void contextLoads() {
