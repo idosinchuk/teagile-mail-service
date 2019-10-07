@@ -61,7 +61,7 @@ public class UserController {
 
 	@GetMapping(path = "/users/login", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Retrieve user by login credentials.")
-	public ResponseEntity<?> getUserByLogin(@RequestParam("email") String email,
+	public ResponseEntity<?> getUserByEmailAndPassword(@RequestParam("email") String email,
 			@RequestParam("password") String password) {
 
 		logger.info("Fetching user by email and password with email {} ", email);
@@ -79,7 +79,7 @@ public class UserController {
 
 	@PatchMapping(path = "/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Update the user.")
-	public ResponseEntity<?> updateUser(@PathVariable("userId") int userId, @RequestBody UserRequestDTO userRequestDTO) {
+	public ResponseEntity<?> updateUserByUserId(@PathVariable("userId") int userId, @RequestBody UserRequestDTO userRequestDTO) {
 
 		logger.info("Process patch user");
 		return userService.updateUser(userId, userRequestDTO);

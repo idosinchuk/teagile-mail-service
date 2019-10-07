@@ -116,7 +116,7 @@ public class MeetingServiceImpl implements MeetingService {
 	}
 
 	@Transactional
-	public ResponseEntity<?> updateMeetingByProjectIdAndMeetingId(int meetingId, int projectId, MeetingRequestDTO meetingRequestDTO) {
+	public ResponseEntity<?> updateMeetingByProjectId(int meetingId, int projectId, MeetingRequestDTO meetingRequestDTO) {
 
 		List<CustomMessage> customMessageList = null;
 		Resources<CustomMessage> resource = null;
@@ -148,7 +148,7 @@ public class MeetingServiceImpl implements MeetingService {
 
 	}
 
-	public ResponseEntity<?> deleteMeetingByProjectIdAndMeetingId(int meetingId, int projectId) {
+	public ResponseEntity<?> deleteMeetingByProjectId(int meetingId, int projectId) {
 
 		try {
 			meetingRepository.deleteByIdAndProjectId(meetingId, projectId);

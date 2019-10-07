@@ -50,6 +50,7 @@ public class ProjectEntity {
 	private List<MeetingEntity> meetings;
 	
 	@JoinTable(name = "user_has_project", joinColumns = @JoinColumn(name = "project_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "user_id", nullable = false))
-    @ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
+            CascadeType.PERSIST })
 	private Set<UserEntity> users = new HashSet<>();
 }

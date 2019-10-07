@@ -117,7 +117,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Transactional
-	public ResponseEntity<?> updateTaskByProjectIdAndMeetingId(int taskId, int projectId, TaskRequestDTO taskRequestDTO) {
+	public ResponseEntity<?> updateTaskByProjectId(int taskId, int projectId, TaskRequestDTO taskRequestDTO) {
 
 		List<CustomMessage> customMessageList = null;
 		Resources<CustomMessage> resource = null;
@@ -149,7 +149,7 @@ public class TaskServiceImpl implements TaskService {
 
 	}
 
-	public ResponseEntity<?> deleteTaskByProjectIdAndMeetingId(int taskId, int projectId) {
+	public ResponseEntity<?> deleteTaskByProjectId(int taskId, int projectId) {
 
 		try {
 			taskRepository.deleteByIdAndProjectId(taskId, projectId);

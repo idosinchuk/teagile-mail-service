@@ -55,19 +55,19 @@ public class MeetingController {
 	@PatchMapping(path = "/projects/{projectId}/meetings/{meetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Update the meeting.")
-	public ResponseEntity<?> updateMeetingByProjectIdAndMeetingId(@PathVariable("projectId") int projectId, @PathVariable("meetingId") int meetingId,
+	public ResponseEntity<?> updateMeetingByProjectId(@PathVariable("projectId") int projectId, @PathVariable("meetingId") int meetingId,
 			@RequestBody MeetingRequestDTO meetingRequestDTO) {
 
 		logger.info("Process patch meeting");
-		return meetingService.updateMeetingByProjectIdAndMeetingId(projectId, meetingId, meetingRequestDTO);
+		return meetingService.updateMeetingByProjectId(projectId, meetingId, meetingRequestDTO);
 	}
 
 	@DeleteMapping(path = "/projects/{projectId}/meetings/{meetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Delete meeting by Id.")
-	public ResponseEntity<?> deleteMeetingByProjectIdAndMeetingId(@PathVariable("projectId") int projectId, @PathVariable("meetingId") int meetingId) {
+	public ResponseEntity<?> deleteMeetingByProjectId(@PathVariable("projectId") int projectId, @PathVariable("meetingId") int meetingId) {
 
 		logger.info("Deleting meeting with projectId and meetingId {} ", projectId, meetingId);
-		return meetingService.deleteMeetingByProjectIdAndMeetingId(projectId, meetingId);
+		return meetingService.deleteMeetingByProjectId(projectId, meetingId);
 	}
 }

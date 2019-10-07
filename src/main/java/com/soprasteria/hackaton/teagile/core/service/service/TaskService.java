@@ -10,8 +10,8 @@ public interface TaskService {
 
 	ResponseEntity<?> addMeetingByProjectId(int projectId, TaskRequestDTO taskRequestDTO);
 
-	ResponseEntity<?> updateTaskByProjectIdAndMeetingId(int taskId, int projectId, TaskRequestDTO taskRequestDTO);
+	ResponseEntity<?> updateTaskByProjectId(int taskId, int projectId, TaskRequestDTO taskRequestDTO);
 
-	ResponseEntity<?> deleteTaskByProjectIdAndMeetingId(int taskId, int projectId);
+	ResponseEntity<?> deleteTaskByProjectId(int taskId, int projectId);
 
 }

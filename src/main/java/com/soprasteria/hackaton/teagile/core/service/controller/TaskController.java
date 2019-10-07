@@ -59,7 +59,7 @@ public class TaskController {
 			@RequestParam("projectId") int projectId, @RequestBody TaskRequestDTO taskRequestDTO) {
 
 		logger.info("Process patch task");
-		return taskService.updateTaskByProjectIdAndMeetingId(taskId, projectId, taskRequestDTO);
+		return taskService.updateTaskByProjectId(taskId, projectId, taskRequestDTO);
 	}
 
 	@DeleteMapping(path = "/projects/{projectId}/tasks/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -69,6 +69,6 @@ public class TaskController {
 			@RequestParam("projectId") int projectId) {
 
 		logger.info("Deleting task with taskId and projectId{} ", taskId);
-		return taskService.deleteTaskByProjectIdAndMeetingId(taskId, projectId);
+		return taskService.deleteTaskByProjectId(taskId, projectId);
 	}
 }
