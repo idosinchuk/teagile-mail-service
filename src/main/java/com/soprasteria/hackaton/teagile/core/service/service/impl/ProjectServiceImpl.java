@@ -82,7 +82,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	}
 
-	public ResponseEntity<?> getProjectByIdUserId(int id, int userId) {
+	public ResponseEntity<?> getProjectByProjectIdAndUserId(int id, int userId) {
 
 		ProjectResponseDTO projectResponseDTO = null;
 		Resources<CustomMessage> resource = null;
@@ -159,24 +159,11 @@ public class ProjectServiceImpl implements ProjectService {
 
 			List<CustomMessage> customMessageList = null;
 
-			// Check if project exists in db
 			projectEntityResponse = projectRepository.findById(projectId);
-
-			// If project does not exists in db
-			if (projectEntityResponse == null) {
-				customMessageList = ArrayListCustomMessage.setMessage(
-						"The project does not exists. Please try to add to other project.", HttpStatus.NO_CONTENT);
-				resource = new Resources<>(customMessageList);
-				resource.add(linkTo(UserController.class).withSelfRel());
-
-				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
-			}
-
-			// Check if user exists in db
 			userEntity = userRepository.findById(userId);
 
-			// If user exists, add project to user
-			if (userEntity != null) {
+			// If user and project exists, add project to user
+			if (projectEntityResponse != null && userEntity != null) {
 				// Convert Set to List
 				List<ProjectEntity> projects = new ArrayList<>(userEntity.getProjects());
 				projects.add(projectEntityResponse);
@@ -187,7 +174,6 @@ public class ProjectServiceImpl implements ProjectService {
 				userRepository.save(userEntity);
 
 				customMessageList = ArrayListCustomMessage.setMessage("Added project to user", HttpStatus.CREATED);
-
 				resource = new Resources<>(customMessageList);
 				resource.add(linkTo(UserController.class).withSelfRel());
 
@@ -199,8 +185,11 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 
 			else {
-				return new ResponseEntity<>(userResponseDTO, HttpStatus.NO_CONTENT);
-
+				customMessageList = ArrayListCustomMessage.setMessage("The project or User does not exists.",
+						HttpStatus.NO_CONTENT);
+				resource = new Resources<>(customMessageList);
+				resource.add(linkTo(UserController.class).withSelfRel());
+				return new ResponseEntity<>(resource, HttpStatus.NO_CONTENT);
 			}
 
 		} catch (Exception e) {

@@ -50,16 +50,16 @@ public class UserController {
 		logger.info("Fetching user with userId {} ", userId);
 		return userService.getUser(userId);
 	}
-
-	@GetMapping(path = "/users-email", produces = MediaType.APPLICATION_JSON_VALUE)
+	
+	@GetMapping(path = "/users/email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Retrieve user by email.")
-	public ResponseEntity<?> getUserByEmail(@RequestParam("email") String email) {
+	public ResponseEntity<?> getUserByEmail(@PathVariable("email") String email) {
 
 		logger.info("Fetching user with email {} ", email);
 		return userService.getUserByEmail(email);
 	}
 
-	@GetMapping(path = "/users-login", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/users/login", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Retrieve user by login credentials.")
 	public ResponseEntity<?> getUserByLogin(@RequestParam("email") String email,
 			@RequestParam("password") String password) {

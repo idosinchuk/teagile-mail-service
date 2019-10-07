@@ -34,7 +34,7 @@ public class TaskController {
 	@Autowired
 	TaskService taskService;
 
-	@GetMapping(path = "/projects/{projectId}/tasks/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/projects/{projectId}/tasks", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve list of all tasks.")
 	public ResponseEntity<?> getAllTasksByProjectId(@PathVariable("projectId") int projectId) {
@@ -46,29 +46,29 @@ public class TaskController {
 	@PostMapping(path = "/projects/{projectId}/tasks", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Add a task.")
-	public ResponseEntity<?> addTask(@PathVariable("projectId") int projectId, @Valid @RequestBody TaskRequestDTO taskRequestDTO) {
+	public ResponseEntity<?> addTaskByProjectId(@PathVariable("projectId") int projectId, @Valid @RequestBody TaskRequestDTO taskRequestDTO) {
 
 		logger.info("Process add task");
-		return taskService.addTask(projectId, taskRequestDTO);
+		return taskService.addMeetingByProjectId(projectId, taskRequestDTO);
 	}
 
 	@PatchMapping(path = "/projects/{projectId}/tasks/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Update the task.")
-	public ResponseEntity<?> updateTask(@RequestParam("taskId") int taskId,
+	public ResponseEntity<?> updateTaskByProjectIdAndMeetingId(@RequestParam("taskId") int taskId,
 			@RequestParam("projectId") int projectId, @RequestBody TaskRequestDTO taskRequestDTO) {
 
 		logger.info("Process patch task");
-		return taskService.updateTask(taskId, projectId, taskRequestDTO);
+		return taskService.updateTaskByProjectIdAndMeetingId(taskId, projectId, taskRequestDTO);
 	}
 
 	@DeleteMapping(path = "/projects/{projectId}/tasks/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Delete the task")
-	public ResponseEntity<?> deleteTask(@RequestParam("taskId") int taskId,
+	public ResponseEntity<?> deleteTaskByProjectIdAndMeetingId(@RequestParam("taskId") int taskId,
 			@RequestParam("projectId") int projectId) {
 
 		logger.info("Deleting task with taskId and projectId{} ", taskId);
-		return taskService.deleteTask(taskId, projectId);
+		return taskService.deleteTaskByProjectIdAndMeetingId(taskId, projectId);
 	}
 }

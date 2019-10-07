@@ -18,13 +18,17 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @NoArgsConstructor
-@Data
+@AllArgsConstructor
+@Getter
+@Setter
 @Table(name = "project")
 public class ProjectEntity {
 

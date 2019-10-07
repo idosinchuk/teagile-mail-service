@@ -34,7 +34,7 @@ public class ProjectController {
 	@Autowired
 	ProjectService projectService;
 
-	@GetMapping(path = "/users/{userId}/projects", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/projects/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve list of all projects by userId")
 	public ResponseEntity<?> getAllProjectsByUserId(@PathVariable("userId") int userId) {
@@ -48,10 +48,10 @@ public class ProjectController {
 	@GetMapping(path = "projects/{projectId}/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve project by projectId and userId.")
-	public ResponseEntity<?> getProject(@PathVariable("projectId") int projectId, @PathVariable("userId") int userId) {
+	public ResponseEntity<?> getProjectByProjectIdAndUserId(@PathVariable("projectId") int projectId, @PathVariable("userId") int userId) {
 
 		logger.info("Fetching project with id and userId {}", projectId, userId);
-		return projectService.getProjectByIdUserId(projectId, userId);
+		return projectService.getProjectByProjectIdAndUserId(projectId, userId);
 	}
 
 	@PostMapping(path = "/projects", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -89,7 +89,7 @@ public class ProjectController {
 	@DeleteMapping(path = "/projects/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Delete project by projectId.")
-	public ResponseEntity<?> deleteUser(@PathVariable("projectId") int projectId) {
+	public ResponseEntity<?> deleteProject(@PathVariable("projectId") int projectId) {
 
 		logger.info("Deleting user with projectId {} ", projectId);
 		return projectService.deleteProject(projectId);

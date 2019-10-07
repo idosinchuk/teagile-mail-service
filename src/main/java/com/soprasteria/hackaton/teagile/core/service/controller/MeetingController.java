@@ -33,7 +33,7 @@ public class MeetingController {
 	@Autowired
 	MeetingService meetingService;
 
-	@GetMapping(path = "/meetings/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/projects/{projectId}/meetings", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Retrieve list of all meetings by projectId.")
 	public ResponseEntity<?> getAllMeetingsByProjectId(
@@ -46,28 +46,28 @@ public class MeetingController {
 	@PostMapping(path = "/projects/{projectId}/meetings", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Add a meeting.")
-	public ResponseEntity<?> addMeeting(@PathVariable("projectId") int projectId, @Valid @RequestBody MeetingRequestDTO meetingRequestDTO) {
+	public ResponseEntity<?> addMeetingByProjectId(@PathVariable("projectId") int projectId, @Valid @RequestBody MeetingRequestDTO meetingRequestDTO) {
 
 		logger.info("Process add meeting");
-		return meetingService.addMeeting(projectId, meetingRequestDTO);
+		return meetingService.addMeetingByProjectId(projectId, meetingRequestDTO);
 	}
 
 	@PatchMapping(path = "/projects/{projectId}/meetings/{meetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Update the meeting.")
-	public ResponseEntity<?> updateMeeting(@PathVariable("projectId") int projectId, @PathVariable("meetingId") int meetingId,
+	public ResponseEntity<?> updateMeetingByProjectIdAndMeetingId(@PathVariable("projectId") int projectId, @PathVariable("meetingId") int meetingId,
 			@RequestBody MeetingRequestDTO meetingRequestDTO) {
 
 		logger.info("Process patch meeting");
-		return meetingService.updateMeeting(projectId, meetingId, meetingRequestDTO);
+		return meetingService.updateMeetingByProjectIdAndMeetingId(projectId, meetingId, meetingRequestDTO);
 	}
 
 	@DeleteMapping(path = "/projects/{projectId}/meetings/{meetingId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@ApiOperation(value = "Delete meeting by Id.")
-	public ResponseEntity<?> deleteMeeting(@PathVariable("projectId") int projectId, @PathVariable("meetingId") int meetingId) {
+	public ResponseEntity<?> deleteMeetingByProjectIdAndMeetingId(@PathVariable("projectId") int projectId, @PathVariable("meetingId") int meetingId) {
 
 		logger.info("Deleting meeting with projectId and meetingId {} ", projectId, meetingId);
-		return meetingService.deleteMeeting(projectId, meetingId);
+		return meetingService.deleteMeetingByProjectIdAndMeetingId(projectId, meetingId);
 	}
 }

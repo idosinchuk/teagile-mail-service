@@ -13,14 +13,17 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @NoArgsConstructor
-@Data
-@Table(name = "user")
+@AllArgsConstructor
+@Getter
+@Setter@Table(name = "user")
 public class UserEntity {
 
 	@Id

@@ -8,10 +8,10 @@ public interface MeetingService {
 
 	ResponseEntity<?> getAllMeetingsByProjectId(int projectId);
 
-	ResponseEntity<?> addMeeting(int projectId, MeetingRequestDTO meetingRequestDTO);
+	ResponseEntity<?> addMeetingByProjectId(int projectId, MeetingRequestDTO meetingRequestDTO);
 
-	ResponseEntity<?> updateMeeting(int meetingId, int projectId, MeetingRequestDTO meetingRequestDTO);
+	ResponseEntity<?> updateMeetingByProjectIdAndMeetingId(int meetingId, int projectId, MeetingRequestDTO meetingRequestDTO);
 
-	ResponseEntity<?> deleteMeeting(int meetingId, int projectId);
+	ResponseEntity<?> deleteMeetingByProjectIdAndMeetingId(int meetingId, int projectId);
 
 }

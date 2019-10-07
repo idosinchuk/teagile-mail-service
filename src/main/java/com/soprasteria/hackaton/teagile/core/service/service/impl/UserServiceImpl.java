@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 		try {
 			List<UserEntity> entityResponse = userRepository.findAll();
 
-			if (!entityResponse.isEmpty()) {
+			if (entityResponse.isEmpty()) {
 				customMessageList = ArrayListCustomMessage.setMessage("There are not meetings!",
 						HttpStatus.NO_CONTENT);
 				resource = new Resources<>(customMessageList);

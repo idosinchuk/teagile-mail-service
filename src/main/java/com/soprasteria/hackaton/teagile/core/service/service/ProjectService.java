@@ -8,7 +8,7 @@ public interface ProjectService {
 
 	ResponseEntity<?> getAllProjectsByUserId(int userId);
 
-	ResponseEntity<?> getProjectByIdUserId(int id, int userId);
+	ResponseEntity<?> getProjectByProjectIdAndUserId(int projectId, int userId);
 
 	ResponseEntity<?> addProject(ProjectRequestDTO projectRequestDTO, int userId);
 
