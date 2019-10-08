@@ -1,6 +1,7 @@
 package com.soprasteria.hackaton.teagile.mail.service.mail;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -11,7 +12,16 @@ import com.soprasteria.hackaton.teagile.mail.service.dto.MailDTO;
 
 @Service
 public class MailClient {
-
+	
+	@Value("${spring.mail.username}")
+	private String mailFrom;
+	
+	@Value("{registration.mail.subject}")
+	private String registrationSubject;
+	
+	@Value("{registration.mail.text}")
+	private String registrationText;
+	
 	private JavaMailSender javaMailSender;
 	private MailContentBuilder mailContentBuilder;
 
@@ -21,13 +31,13 @@ public class MailClient {
 		this.mailContentBuilder = mailContentBuilder;
 	}
 
-	public void prepareAndSend(MailDTO mailDTO, String type) {
+	public void prepareAndSend(MailDTO mailDTO) {
 		MimeMessagePreparator messagePreparator = mimeMessage -> {
 			MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
-			messageHelper.setFrom("teagilehackaton@gmail.com");
+			messageHelper.setFrom(mailFrom);
 			messageHelper.setTo(mailDTO.getEmail());
-			messageHelper.setSubject("Welcome to TEAgile");
-			String content = mailContentBuilder.build("Congratulations, your account has been created successfully.");
+			messageHelper.setSubject(registrationSubject);
+			String content = mailContentBuilder.build(registrationText);
 			messageHelper.setText(content, true);
 		};
 		

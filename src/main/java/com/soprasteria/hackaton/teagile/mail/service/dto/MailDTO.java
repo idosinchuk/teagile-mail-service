@@ -7,11 +7,9 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class MailDTO {
-
+	
 	private String email;
 
-	private String description;
-
-
+	private String type;
 
 }

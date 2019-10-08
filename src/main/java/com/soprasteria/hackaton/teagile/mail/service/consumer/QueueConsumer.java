@@ -26,7 +26,7 @@ public class QueueConsumer {
 	private void processMessage(String message) {
 		try {
 			MailDTO mailDTO = new ObjectMapper().readValue(message, MailDTO.class);
-			mailClient.prepareAndSend(mailDTO, null);
+			mailClient.prepareAndSend(mailDTO);
 		} catch (JsonParseException e) {
 			log.warn("Bad JSON in message: " + message);
 		} catch (JsonMappingException e) {
