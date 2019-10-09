@@ -9,11 +9,11 @@
 		<version>2.1.7.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.soprasteria.hackaton.teagile.rabbitmq.service</groupId>
-	<artifactId>teagile-rabbitmq-service</artifactId>
+	<groupId>com.soprasteria.hackaton.teagile.mail.service</groupId>
+	<artifactId>teagile-mail-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>teagile-rabbitmq-service</name>
-	<description>TEAgile RabbitMQ Service for SopraSteria Hackaton</description>
+	<name>teagile-mail-service</name>
+	<description>TEAgile Mail Service for SopraSteria Hackaton</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
