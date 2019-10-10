@@ -1,5 +1,5 @@
 # teagile-mail-service
-TEAgile Mail Service for SopraSteria Hackaton
+Mail Service for TEAgile project
 
 Install RabbitMQ: https://www.rabbitmq.com/install-windows.html#installer
 				  https://www.youtube.com/watch?v=oRIF1xKEI0I

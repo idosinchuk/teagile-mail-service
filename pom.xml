@@ -9,11 +9,11 @@
 		<version>2.1.7.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.soprasteria.hackaton.teagile.mail.service</groupId>
+	<groupId>com.idosinchuk.teagile.mail.service</groupId>
 	<artifactId>teagile-mail-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>teagile-mail-service</name>
-	<description>TEAgile Mail Service for SopraSteria Hackaton</description>
+	<description>Mail Service for TEAgile project</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,6 +46,7 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- Mail -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
@@ -71,18 +72,10 @@
 
 	<build>
 		<plugins>
-		
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			
-			<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.0</version>
-            </plugin>
-            
 		</plugins>
 	</build>
 

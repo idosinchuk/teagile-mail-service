@@ -1,4 +1,4 @@
-package com.soprasteria.hackaton.teagile.mail.service;
+package com.idosinchuk.teagile.mail.service;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.soprasteria.hackaton.teagile.mail.service.consumer.QueueConsumer;
+import com.idosinchuk.teagile.mail.service.consumer.QueueConsumer;
 
 @Configuration
 public class RabbitConfiguration {

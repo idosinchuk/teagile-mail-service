@@ -1,4 +1,4 @@
-package com.soprasteria.hackaton.teagile.mail.service.dto;
+package com.idosinchuk.teagile.mail.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

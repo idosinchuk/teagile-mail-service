@@ -1,4 +1,4 @@
-package com.soprasteria.hackaton.teagile.mail.service.consumer;
+package com.idosinchuk.teagile.mail.service.consumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.soprasteria.hackaton.teagile.mail.service.dto.MailDTO;
-import com.soprasteria.hackaton.teagile.mail.service.mail.MailClient;
+import com.idosinchuk.teagile.mail.service.dto.MailDTO;
+import com.idosinchuk.teagile.mail.service.mail.MailClient;
 
 import lombok.extern.slf4j.Slf4j;
 

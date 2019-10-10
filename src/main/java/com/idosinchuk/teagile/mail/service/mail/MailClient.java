@@ -1,4 +1,6 @@
-package com.soprasteria.hackaton.teagile.mail.service.mail;
+package com.idosinchuk.teagile.mail.service.mail;
+
+import java.util.ResourceBundle;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,20 +10,22 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
-import com.soprasteria.hackaton.teagile.mail.service.dto.MailDTO;
+import com.idosinchuk.teagile.mail.service.dto.MailDTO;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class MailClient {
-	
+
 	@Value("${spring.mail.username}")
 	private String mailFrom;
-	
-	@Value("{registration.mail.subject}")
-	private String registrationSubject;
-	
-	@Value("{registration.mail.text}")
-	private String registrationText;
-	
+
+	// Get properties from messages.properties
+	ResourceBundle bundle = ResourceBundle.getBundle("messages");
+	private String registrationSubject = bundle.getString("registration.mail.subject");
+	private String registrationText = bundle.getString("registration.mail.text");
+
 	private JavaMailSender javaMailSender;
 	private MailContentBuilder mailContentBuilder;
 
@@ -40,11 +44,11 @@ public class MailClient {
 			String content = mailContentBuilder.build(registrationText);
 			messageHelper.setText(content, true);
 		};
-		
+
 		try {
 			javaMailSender.send(messagePreparator);
 		} catch (MailException e) {
-			// runtime exception; compiler will not force you to handle it
+			log.error("There was an error {} " + e.getMessage());
 		}
 	}
 

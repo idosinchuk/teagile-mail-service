@@ -1,4 +1,4 @@
-package com.soprasteria.hackaton.teagile.mail.service;
+package com.idosinchuk.teagile.mail.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
